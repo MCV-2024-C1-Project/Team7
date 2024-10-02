@@ -56,8 +56,6 @@ def create_distance_matrix(query_dict, bd_dict, method):
 
     Returns
     -------
-    str
-        The name of the used query
     ndarray
         Matrix with all the similarity values
     """
