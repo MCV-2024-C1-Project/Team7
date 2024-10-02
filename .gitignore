@@ -1,3 +1,7 @@
+# Datasets
+data/BBDD/
+data/qsd1_w1/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
