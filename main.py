@@ -23,8 +23,8 @@ def parse_args():
     parser.add_argument('--k-val', type=int, required=True,
                         help="The number of top results to retrieve (k-value)")
 
-    parser.add_argument('--results-dir', type=str, required=True,
-                        help="Directory to save the retrieval results")
+    parser.add_argument('--results-file', type=str, required=True,
+                        help="File to save the retrieval results")
 
     return parser.parse_args()
 
@@ -36,9 +36,6 @@ def main():
     # Argument validation
     if not (0 < args.k_val <= 288):
         raise ValueError("The k-value must be a positive integer less than or equal to 288")
-
-    if not os.path.exists(args.results_dir):
-        os.makedirs(args.results_dir, exist_ok=True, mode=0o777)
 
     # Mapping similarity measure to method index
     method_idx = ['Correlation', 'Chi-Square', 'Intersection', 'Bhattacharyya', 'Hellinger'].index(args.similarity_measure)
@@ -58,7 +55,7 @@ def main():
     query_predictions = generate_results(similarity_matrix)
 
     # Generate submission results
-    generate_submission(query_predictions, args.k_val, args.results_dir)
+    generate_submission(query_predictions, args.k_val, args.results_file)
 
 
 if __name__ == "__main__":
