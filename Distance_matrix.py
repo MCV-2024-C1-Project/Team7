@@ -67,6 +67,25 @@ def create_distance_matrix(query_list, bd_list, method):
 
     return similarity_matrix
 
+def generate_results(similarity_matrix):
+    """
+    Generates a matrix that contains the indexes of each image sorted by score
+    for each row.
+
+    Parameters
+    ----------
+    similarity_matrix: ndarray
+        Matrix with all the similarity values
+    
+    Returns
+    -------
+    list
+        contains sorted lists of indexes by score of the similarity matrix
+    """
+    result = []
+    for row in similarity_matrix:
+        result.append(np.argsort(row)[::-1])
+    return result
 
 def generate_submission(similarity_matrix, k_val, output_path='result.pkl'):
     """
@@ -84,11 +103,10 @@ def generate_submission(similarity_matrix, k_val, output_path='result.pkl'):
     output_path : str
         Relative path to save the submission file
     """
-
-    submission = []
-    for row in similarity_matrix:
-        submission.append(np.argsort(row)[::-1][:k_val])
-
+    results = generate_results(similarity_matrix)
+    submission = np.array(results)[:,:k_val].tolist()
     writer = open(output_path, 'wb')
     pickle.dump(submission, writer)
     writer.close()
+
+
