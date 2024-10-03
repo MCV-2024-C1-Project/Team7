@@ -3,10 +3,10 @@ import cv2
 import pickle
 import matplotlib.pyplot as plt
 
-def create_histo_dir(base_dir, color_space):
+def create_histo_dir(base_dir, color_space, dataset):
     # Create directory for the specific color space to save histograms 
 
-    histogram_dir = os.path.join(base_dir, color_space)
+    histogram_dir = os.path.join(base_dir, dataset, color_space)
     os.makedirs(histogram_dir, exist_ok=True)
     return histogram_dir
 
@@ -76,18 +76,19 @@ def save_histograms(histograms, filename, output_dir):
     with open(hist_path, 'wb') as f:
         pickle.dump(histograms, f)
 
-def process_images(path, base_output_dir, color_space='LAB', plot=False):
+def process_images(path, base_output_dir, color_space='LAB', dataset="any", plot=False):
     # "Main"
     """
     Parameters:
     - path: Directory containing the input images.
     - base_output_dir: Base directory to store histograms.
     - color_space: The color space to use to get histograms.
+    - dataset: The dataset the images are from. Used to create subfolders.
     - plot: Whether to plot the histograms for each image.
     """
 
     # Create the directory to later save histograms
-    histogram_dir = create_histo_dir(base_output_dir, color_space)
+    histogram_dir = create_histo_dir(base_output_dir, color_space, dataset)
 
     # Iterate through the images in the directory
     for filename in os.listdir(path):
@@ -109,8 +110,14 @@ def process_images(path, base_output_dir, color_space='LAB', plot=False):
                 plot_histograms(histograms, color_space, filename)
 
 #config (potser podriem fer config file?)
-image_directory = "/Users/abriil/Uni/master/C1/data/qsd1_w1"
-output_directory = "/Users/abriil/Uni/master/C1/data/histograms"
-selected_color_space = 'LAB'  # Choose from 'RGB', 'LAB', 'HSV', 'YCrCb', 'GRAY'
+data_dir = "./data"
+output_dir = "./data/histograms"
+datasets = ['BBDD', 'qsd1_w1', 'qst1_w1']
+color_spaces = ['RGB', 'LAB', 'HSV', 'YCrCb', 'GRAY']
 plot = False
-process_images(image_directory, output_directory, selected_color_space, plot)
+
+# Generate histograms for all methods for all datasets
+for color_space in color_spaces:
+    for dataset in datasets:
+        image_directory = os.path.join(data_dir, dataset)
+        process_images(image_directory, output_dir, color_space, dataset, plot)
