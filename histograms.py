@@ -71,7 +71,8 @@ def plot_histograms(histograms, color_space, filename):
 def save_histograms(histograms, filename, output_dir):
     # Save histograms in the corresponding directory, using pickle
 
-    hist_filename = os.path.splitext(filename)[0] + "_hist.pkl"
+    root, extension = os.path.splitext(filename) 
+    hist_filename = root.split("_")[-1] + ".pkl" # Get image number
     hist_path = os.path.join(output_dir, hist_filename)
     with open(hist_path, 'wb') as f:
         pickle.dump(histograms, f)
