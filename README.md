@@ -42,21 +42,34 @@ main.py argument argument etc.
 ```
 
 ## This weeks pipeline
-As a summary, this weeks task the execution pipeline to obtain the submition are the next:
+As a summary, for this weeks task, the execution pipeline to obtain the submition is the next:
 
 ```
 create_histograms.py --> main.py
 ```
 
+## New files
+### distance_matrix.py
+### histograms.py
+### create_histogram.py
+### main.py
 ## Extra functionalities
 
 Aqui posem totes les coses extres que hem fet com lo de visualitzar histogrames i tota la pesca
+
+* ```plot_histograms```: makes possible the visualization of the histogram extracted from an image. If there is more than one chanel the histograms appear in the same plot.
 
 ## Required libraries
 * Numpy
 * OpenCV
 * Matplotlib
-
+* Pandas 
+* Imageio
+* Docopt
+* Scikit-image
+* Sklearn
+* Ml_metrics
+* Dataframe_image
 ### 
 This repository contains code for the MCV C1 Project. The code can be used to evaluate your results and to
 check that the weekly submissions have the proper format.
