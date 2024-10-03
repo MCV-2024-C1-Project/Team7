@@ -1,4 +1,4 @@
-from utils.histograms import process_images
+from src.utils.histograms import process_images
 import os
 
 #config (potser podriem fer config file?)
