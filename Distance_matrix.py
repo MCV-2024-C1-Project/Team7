@@ -30,10 +30,10 @@ def load_histograms(hist_path):
         file_path = os.path.join(hist_path, file)
         with open(file_path, 'rb') as reader:
             histogram = pickle.load(reader)
+            histogram = np.concatenate(histogram) # Ensure it's 1D
             hist_list.append(histogram)
     
     return hist_list
-
 
 def create_distance_matrix(query_list, bd_list, method):
     """
