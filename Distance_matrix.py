@@ -18,34 +18,33 @@ def load_histograms(hist_path):
 
     Returns
     -------
-    dict
-        A dictionary with all the histograms in the directory
+    list
+        A list with all the histograms in the directory
     """
-    ## Do we want to preserve the filenames? If not with a list and not a dictionary would work
+    hist_list = []
 
-    hist_dict={}
+    # Sort files to ensure they are in numeric order
+    files = sorted(os.listdir(hist_path), key=lambda x: int(Path(x).stem))
 
-    for file in os.listdir(hist_path):
-        file_path = os.path.join(hist_path,file)
-        reader = open(file_path)
-        histogram = pickle.load(reader)
-        reader.close()
-        hist_dict[Path(file_path).stem] = histogram
+    for file in files:
+        file_path = os.path.join(hist_path, file)
+        with open(file_path, 'rb') as reader:
+            histogram = pickle.load(reader)
+            hist_list.append(histogram)
     
-    return hist_dict
+    return hist_list
 
 
-
-def create_distance_matrix(query_dict, bd_dict, method):
+def create_distance_matrix(query_list, bd_list, method):
     """
-    Loads a query and computs the similarity with all the histograms of the existing images
+    Loads a query and computes the similarity with all the histograms of the existing images
 
     Parameters
     ----------
-    query_dict : dict
-        Dictionary of all the querys
-    bd_path : dict
-        Dictionary that contains the histograms of the BD
+    query_list : list
+        List of all the query histograms
+    bd_list : list
+        List that contains the histograms of the BD
     method : int
         Specifies which similarity method to use
         1. Correlation
@@ -60,16 +59,36 @@ def create_distance_matrix(query_dict, bd_dict, method):
         Matrix with all the similarity values
     """
     # A row for each query and a column for each element in the DB to search
-    similarity_matrix = np.zeros((len(query_dict),len(bd_dict)))
+    similarity_matrix = np.zeros((len(query_list), len(bd_list)))
 
-
-    ## If we need to search each query for all elements i think there is no easy way other than doing all
-    ## For comparing all the elements in a DB with themselves we can omit when ii==jj and when ii>jj -> the value will be the one in [jj][ii]
-
-    for ii, query in enumerate(query_dict.values()):
-        for jj, hist in enumerate(bd_dict.values()):
+    for ii, query in enumerate(query_list):
+        for jj, hist in enumerate(bd_list):
             similarity_matrix[ii][jj] = cv2.compareHist(query, hist, method)
 
     return similarity_matrix
 
 
+def generate_submission(similarity_matrix, k_val, output_path='result.pkl'):
+    """
+    Generates a submission pkl file with the top K predictions
+    (sorted from most probable to least) for each query.
+    The stucture is a list of lists, where each list corresponds to a query
+    and its elements are the indexes of the top K predictions
+
+    Parameters
+    ----------
+    similarity_matrix : ndarray
+        Matrix with all the similarity values
+    k_val : int
+        Number of top predictions to save
+    output_path : str
+        Relative path to save the submission file
+    """
+
+    submission = []
+    for row in similarity_matrix:
+        submission.append(np.argsort(row)[::-1][:k_val])
+
+    writer = open(output_path, 'wb')
+    pickle.dump(submission, writer)
+    writer.close()
