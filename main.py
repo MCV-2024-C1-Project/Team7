@@ -17,7 +17,7 @@ def parse_args():
     parser.add_argument('--color-space', type=str,
                         choices=['GRAY', 'HSV', 'LAB', 'RGB', 'YCrCb'],
                         help="The color space to be used. Choose from: GRAY, HSV, LAB, RGB, YCrCb",
-                        default='YCrCb')
+                        default='LAB')
 
     parser.add_argument('--similarity-measure', type=str,
                         choices=['Correlation', 'Chi-Square', 'Intersection', 'Bhattacharyya', 'Hellinger'],

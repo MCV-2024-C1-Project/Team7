@@ -1,4 +1,4 @@
-# Master Computer Vision, Module C1
+# Master in Computer Vision. Introduction to Human and Computer Vision
 
 ## Module C1 - Week 1
 The goal of this week's task is to match pictures of paintings from a large image database with other image queries that feature those artworks. The resemblance between each query and each image in the database is assessed based on their visual content; specifically, the similarity between their histograms.
@@ -14,21 +14,22 @@ It is required to have downloaded the three DB (BBDD, qsd1_w1, qst1_w1) and to h
 ./data/histograms/<DataBaseFolderName>/<ColorRepresentation>/<OriginalFileName>.pkl
 ```
  
-However, the subsequent tasks require the choice of only two color representations. In our case, the selected ones have been CIELAB and the combination of RGB + Grayscale.
+However, the subsequent tasks require the choice of only two color representations. In our case, the selected ones have been CIELAB and a combination of RGB and Grayscale.
 
 % TODO Si una d'aquestes representacions separa en diversos canals estaria superxulo posar tres imatges amb cadascun dels canals! <3
 
-#### Method 1: CIELAB + Correlation
-% TODO explain the representation and the reason for choosing it
+#### Method 1: CIELAB
+CIELAB was chosen for its perceptual uniformity, allowing for more accurate color comparisons that align with human vision.
 
-#### Method 2: GRAY + RGB + Correlation
-% TODO explain the representation and the reason for choosing it
+#### Method 2: GRAY and RGB
+In Method 2, we combine Grayscale and RGB representations. Grayscale focuses on intensity, highlighting textures and patterns, while RGB retains essential color information. This combination provides a balanced approach, leveraging texture and color details.
 
 ### Task 2
-Task two consisted on choosing between different similarity measures that would be used to compute the likeliness of the histograms. The measure we chose is:
+Task two consisted on choosing between different similarity measures that would be used to compute the likeliness of the histograms. The measure we chose is correlation.
+% TODO no sé gaire què comentar de la correlation
 
-#### Similarity measure 1
-$Formula   de  mates  superxula$
+#### Correlation
+$d(H_1, H_2) = \frac{\sum_i (H_1(i) - \overline{H}_1)(H_2(i) - \overline{H}_2)}{\sqrt{\sum_i (H_1(i) - \overline{H}_1)^2 \sum_i (H_2(i) - \overline{H}_2)^2}}$
 
 ### Task 3
 In task three, the similarity between the queries and all the images in the database is computed according to the described criteria in the two previous tasks. The top ``K`` predictions for each query (i.e., the indices of the ``K`` most similar histograms for each of the queries, sorted) are returned by the function ``generate_results()``. These results allow us to compute the mAP@K. The obtained values for the mAP@K with the pre-selected methods are the following:
@@ -40,7 +41,7 @@ In task three, the similarity between the queries and all the images in the data
 ### Task 4
 The creation of the submition for the blind competition is done in the ```main.py``` file. Remember to execute the file ```create_histograms.py``` before. This script should be executed as follows:
 ```
-main.py argument argument etc.
+main.py --queries-hist-dir qst1_w1 --color-space LAB --similarity-measure Correlation --k-val 10 --results-file result.pkl
 ```
 
 ## This week's pipeline
