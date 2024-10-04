@@ -27,7 +27,6 @@ for dataset in datasets:
                 comb_histogram = pickle.load(reader)
                 comb_histogram = np.append(comb_histogram, [gray_histogram], axis=0)
                 saving_direct = gray_path+repr
-                print(saving_direct)
                 os.makedirs(saving_direct, exist_ok=True)
                 save_histograms(comb_histogram.tolist, file, saving_direct)
             reader.close()
