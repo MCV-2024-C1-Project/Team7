@@ -31,12 +31,13 @@ def main():
     if not (0 < args.k_val <= 288):
         raise ValueError("The k-value must be a positive integer less than or equal to 288")
     for method in ['Correlation', 'Chi-Square', 'Intersection', 'Bhattacharyya', 'Hellinger']:
+        #['GRAY', 'HSV', 'LAB', 'RGB', 'YCrCb','GRAYHSV','GRAYLAB','GRAYRGB','GRAYYCrCb']
         for color_space in ['GRAY', 'HSV', 'LAB', 'RGB', 'YCrCb']:
             # Mapping similarity measure to method index
             method_idx = ['Correlation', 'Chi-Square', 'Intersection', 'Bhattacharyya', 'Hellinger'].index(method)
 
             # Set directories for the histograms
-            bbdd_hist_dir = os.path.join('data', 'histograms', 'bbdd', color_space)
+            bbdd_hist_dir = os.path.join('data', 'histograms', 'BBDD', color_space)
             queries_hist_dir = os.path.join('data', 'histograms', args.queries_hist_dir, color_space)
 
             # Load histograms
@@ -53,9 +54,8 @@ def main():
             results = generate_results(similarity_matrix)
             results = generate_submission(results, args.k_val)
             #print(ground_truth)
-            transformed_results = [[[item] for item in sublist] for sublist in results]
             #print(results)
-            mapk = compute_mapk(ground_truth, transformed_results, args.k_val)
+            mapk = compute_mapk(ground_truth, results, args.k_val)
             print(method,"---",color_space,":")
             print("MAPK: ",mapk)
 
