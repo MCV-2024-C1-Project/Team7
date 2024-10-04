@@ -28,5 +28,5 @@ for dataset in datasets:
                 comb_histogram = np.append(comb_histogram, [gray_histogram], axis=0)
                 saving_direct = gray_path+repr
                 os.makedirs(saving_direct, exist_ok=True)
-                save_histograms(comb_histogram.tolist, file, saving_direct)
+                save_histograms(comb_histogram.tolist(), file, saving_direct)
             reader.close()
