@@ -1,48 +1,50 @@
 # Master Computer Vision, Module C1
 
 ## Module C1 - Week 1
-The goal of this week task is searching images froma a large image BD based on the visual contents using histograms and similarity metrics.
+The goal of this week's task is to match pictures of paintings from a large image database with other image queries that feature those artworks. The resemblance between each query and each image in the database is assessed based on their visual content; specifically, the similarity between their histograms.
+
 ### Task 1
-On task one we had to choose up to two methods for computing the image descriptors as histograms. We have decided to calculate beforehand all the histograms for the next representations: RGB, LAB, HSV, YCrCb, Grayscale so we could experiment a bit if we wanted to. After the proces of creation the script saves them in pickle files. This is done executing the ```create_histograms.py``` script and having the databases in the next directory:
+In task one, up to two methods could be chosen for computing the image descriptors (histograms). We decided to calculate all the histograms in advance for the following color representations: RGB, CIELAB, HSV, YCrCb, and Grayscale, so we could experiment if we wanted to. After the process of creation, the histograms are saved in pickle files. This is done by executing the ```create_histograms.py``` script and having the databases in the following directory:
 
 ```
 ./data
 ```
-It is required to have downloaded the three DB (BBDD, qsd1_w1, qst1_w1) and placing them in that directory, after that you can execute the script. After the execution the files will be distributed as the following:
+It is required to have downloaded the three DB (BBDD, qsd1_w1, qst1_w1) and to have placed them in ``data`` in order to execute the script. After the execution, the files will be distributed as the following:
 ```
-./data/histograms/<DataBaseFolderName>/<Representation>/<OriginalFileName>.pkl
+./data/histograms/<DataBaseFolderName>/<ColorRepresentation>/<OriginalFileName>.pkl
 ```
  
+However, the subsequent tasks require the choice of only two color representations. In our case, the selected ones have been 'Rep1' and 'Rep2'.
 
-However as the next tasks that require choosing two representations the ones selected are:
-
-Si una d'aquestes representacions separa en diversos canals estaria superxulo posar tres imatges amb cadascun dels canals
+% TODO Si una d'aquestes representacions separa en diversos canals estaria superxulo posar tres imatges amb cadascun dels canals! <3
 
 #### Representació 1
+% TODO explain the representation and the reason for choosing it
 
 #### Representació 2
+% TODO explain the representation and the reason for choosing it
 
 ### Task 2
-On the second task we had to select between diferent similarity measures to compute how alike are two histograms. The selected measure is:
+Task two consisted on choosing between different similarity measures that would be used to compute the likeliness of the histograms. The measure we chose is:
 
 #### Similarity measure 1
 $Formula   de  mates  superxula$
 
 ### Task 3
-For this task the return of the top k images has been done on the main script with the help of the ``generate_result`` function that gives the sorted index of each histogram by similarity. With the results we select the top K results and then compute de MAP@K. The obtained values for the MAP@K with the pre-selected methods are the following:
-|          | MAP@1 | MAP@5 |
+In task three, the similarity between the queries and all the images in the database is computed according to the described criteria in the two previous tasks. The top ``K`` predictions for each query (i.e., the indices of the ``K`` most similar histograms for each of the queries, sorted) are returned by the function ``generate_results()``. These results allow us to compute the mAP@K. The obtained values for the mAP@K with the pre-selected methods are the following:
+|          | mAP@1 | mAP@5 |
 |----------|-------|-------|
 | Method 1 |       |       |
 | Method 2 |       |       |
 
 ### Task 4
-The creation of the submition for the blind competition is done in the ```main.py``` file, remember executing the ```create_histograms.py``` before. The execution of this script has to be done in the next way:
+The creation of the submition for the blind competition is done in the ```main.py``` file. Remember to execute the file ```create_histograms.py``` before. The execution of this script has to be done as follows:
 ```
 main.py argument argument etc.
 ```
 
-## This weeks pipeline
-As a summary, for this weeks task, the execution pipeline to obtain the submition is the next:
+## This week's pipeline
+As a summary, for this week's task, the execution pipeline to obtain the submition is the following:
 
 ```
 create_histograms.py --> main.py

@@ -10,22 +10,27 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(description="Process input for image retrieval")
 
-    parser.add_argument('--queries-hist-dir', type=str, required=True,
-                        help="Name of the directory containing query histograms")
+    parser.add_argument('--queries-hist-dir', type=str,
+                        help="Name of the directory containing query histograms",
+                        default='qsd1_w1')
     
-    parser.add_argument('--color-space', type=str, required=True,
+    parser.add_argument('--color-space', type=str,
                         choices=['GRAY', 'HSV', 'LAB', 'RGB', 'YCrCb'],
-                        help="The color space to be used. Choose from: GRAY, HSV, LAB, RGB, YCrCb")
+                        help="The color space to be used. Choose from: GRAY, HSV, LAB, RGB, YCrCb",
+                        default='YCrCb')
 
-    parser.add_argument('--similarity-measure', type=str, required=True,
+    parser.add_argument('--similarity-measure', type=str,
                         choices=['Correlation', 'Chi-Square', 'Intersection', 'Bhattacharyya', 'Hellinger'],
-                        help="The similarity measure to be used")
+                        help="The similarity measure to be used",
+                        default='Correlation')
 
-    parser.add_argument('--k-val', type=int, required=True,
-                        help="The number of top results to retrieve (k-value)")
+    parser.add_argument('--k-val', type=int,
+                        help="The number of top results to retrieve (k-value)",
+                        default=10)
 
-    parser.add_argument('--results-file', type=str, required=True,
-                        help="File to save the retrieval results")
+    parser.add_argument('--results-file', type=str,
+                        help="File to save the retrieval results",
+                        default='result.pkl')
 
     return parser.parse_args()
 
