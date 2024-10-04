@@ -2,8 +2,9 @@ import os
 import argparse
 import numpy as np
 from src.utils.histograms import load_histograms
-from src.utils.distance_matrix import create_distance_matrix, generate_results, generate_submission
+from src.utils.Distance_matrix import create_distance_matrix, generate_results, generate_submission
 from src.utils.score_painting_retrieval import compute_mapk
+from src.utils.ml_metrics import mapk
 import pickle
 
 def parse_args():
@@ -53,13 +54,10 @@ def main():
                 ground_truth = pickle.load(reader)
 
             results = np.array(generate_results(similarity_matrix)).tolist()
-            #results = generate_submission(results, args.k_val)
-            #print(ground_truth)
-            #print(results)
-            #print("len: ",len(results))
-            mapk = compute_mapk(ground_truth, results, args.k_val)
 
-            print("MAPK: ",mapk)
+            mapk_val = mapk(ground_truth, results, args.k_val)
+
+            print("MAPK: ", mapk_val)
 
 
 if __name__ == "__main__":
