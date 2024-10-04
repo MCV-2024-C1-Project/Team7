@@ -3,6 +3,7 @@ import cv2
 import pickle
 import matplotlib.pyplot as plt
 from pathlib import Path
+import numpy as np
 
 def create_histo_dir(base_dir, color_space, dataset):
     # Create directory for the specific color space to save histograms 

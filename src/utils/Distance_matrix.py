@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import pickle
 import os
-from pathlib import Path
+
 
 # -> is a comentary
 ## -> is a doubt
@@ -60,7 +60,7 @@ def generate_results(similarity_matrix):
         result.append(np.argsort(row)[::-1])
     return result
 
-def generate_submission(similarity_matrix, k_val, output_path='result.pkl'):
+def generate_submission(results, k_val, output_path='result.pkl'):
     """
     Generates a submission pkl file with the top K predictions
     (sorted from most probable to least) for each query.
@@ -69,20 +69,18 @@ def generate_submission(similarity_matrix, k_val, output_path='result.pkl'):
 
     Parameters
     ----------
-    similarity_matrix : ndarray
-        Matrix with all the similarity values
+    results : ndarray
+        Sorted lists of indexes by score of the similarity matrix
     k_val : int
         Number of top predictions to save
     output_path : str
         Relative path to save the submission file
     """
     #generate predictions
-    results = generate_results(similarity_matrix)
     submission = np.array(results)[:,:k_val].tolist()
     writer = open(output_path, 'wb')
     pickle.dump(submission, writer)
     writer.close()
 
-    return submission
 
 
