@@ -174,7 +174,7 @@ if __name__ == '__main__':
     # This folder contains fake masks and text annotations. 
     test_dir = args['<testDir>']
 
-    test_qs1 = '{}/W{}/QST1/gt_corresps.pkl'.format(test_dir,week)
+    test_qs1 = '{}/W{}/qst1/gt_corresps.pkl'.format(test_dir,week)
     with open(test_qs1, 'rb') as fd:
         gt_query = pickle.load(fd)
     num_queries = len(gt_query)
@@ -187,7 +187,7 @@ if __name__ == '__main__':
     results_dir = '{}/week{}'.format(base_dir, week)
 
     # Test Query set 1:
-    qs1_dir = '{}/QST1'.format(results_dir)
+    qs1_dir = '{}/qst1'.format(results_dir)
     if not os.path.isdir(qs1_dir):
         print ('{} does not exist!'.format(qs1_dir))
         sys.exit()
@@ -232,12 +232,12 @@ if __name__ == '__main__':
     # Test Query set 2:
     ##################
     
-    test_dir_qs2 = '{}/W{}/QST2'.format(test_dir,week)
+    test_dir_qs2 = '{}/W{}/qst2'.format(test_dir,week)
     with open('{}/gt_corresps.pkl'.format(test_dir_qs2), 'rb') as fd1:
         gt_query = pickle.load(fd1)
     num_queries = len(gt_query)
 
-    qs2_dir = '{}/QST2'.format(results_dir)
+    qs2_dir = '{}/qst2'.format(results_dir)
     if not os.path.isdir(qs2_dir):
         print ('{} does not exist!'.format(qs2_dir))
         sys.exit()
