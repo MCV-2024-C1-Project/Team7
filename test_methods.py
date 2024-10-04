@@ -56,7 +56,7 @@ def main():
             transformed_results = [[[item] for item in sublist] for sublist in results]
             #print(results)
             mapk = compute_mapk(ground_truth, transformed_results, args.k_val)
-            print(color_space,"---",method,":")
+            print(method,"---",color_space,":")
             print("MAPK: ",mapk)
 
 
