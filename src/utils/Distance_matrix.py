@@ -82,5 +82,7 @@ def generate_submission(results, k_val, output_path='result.pkl'):
     pickle.dump(submission, writer)
     writer.close()
 
+    return submission
+
 
 

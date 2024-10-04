@@ -25,11 +25,11 @@ import sys
 import pickle
 from docopt import docopt
 import imageio
-from ml_metrics import mapk,apk
+from src.utils.ml_metrics import mapk,apk
 #from sklearn.metrics import jaccard_similarity_score
 from sklearn.metrics import jaccard_score
 import evaluation.evaluation_funcs as evalf
-import geometry_utils as gu
+import src.utils.geometry_utils as gu
 from operator import itemgetter
 from Levenshtein import distance
 
