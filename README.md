@@ -14,14 +14,14 @@ It is required to have downloaded the three DB (BBDD, qsd1_w1, qst1_w1) and to h
 ./data/histograms/<DataBaseFolderName>/<ColorRepresentation>/<OriginalFileName>.pkl
 ```
  
-However, the subsequent tasks require the choice of only two color representations. In our case, the selected ones have been 'Rep1' and 'Rep2'.
+However, the subsequent tasks require the choice of only two color representations. In our case, the selected ones have been CIELAB and the combination of RGB + Grayscale.
 
 % TODO Si una d'aquestes representacions separa en diversos canals estaria superxulo posar tres imatges amb cadascun dels canals! <3
 
-#### Representació 1
+#### Method 1: CIELAB + Correlation
 % TODO explain the representation and the reason for choosing it
 
-#### Representació 2
+#### Method 2: GRAY + RGB + Correlation
 % TODO explain the representation and the reason for choosing it
 
 ### Task 2
@@ -38,7 +38,7 @@ In task three, the similarity between the queries and all the images in the data
 | Method 2 |       |       |
 
 ### Task 4
-The creation of the submition for the blind competition is done in the ```main.py``` file. Remember to execute the file ```create_histograms.py``` before. The execution of this script has to be done as follows:
+The creation of the submition for the blind competition is done in the ```main.py``` file. Remember to execute the file ```create_histograms.py``` before. This script should be executed as follows:
 ```
 main.py argument argument etc.
 ```

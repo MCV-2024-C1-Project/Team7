@@ -1,7 +1,7 @@
 import os
 import argparse
-from src.utils.distance_matrix import create_distance_matrix, generate_submission
 from src.utils.histograms import load_histograms
+from src.utils.distance_matrix import create_distance_matrix, generate_results, generate_submission
 
 
 def parse_args():
@@ -58,7 +58,8 @@ def main():
     similarity_matrix = create_distance_matrix(query_list, bbdd_list, method_idx)
 
     # Generate submission results
-    generate_submission(similarity_matrix, args.k_val, args.results_file)
+    results = generate_results(similarity_matrix)
+    generate_submission(results, args.k_val, args.results_file)
 
 if __name__ == "__main__":
     main()

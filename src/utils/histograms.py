@@ -4,6 +4,7 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
+import numpy as np
 
 def create_histo_dir(base_dir, color_space, dataset):
     # Create directory for the specific color space to save histograms 
@@ -130,7 +131,6 @@ def load_histograms(hist_path):
 
     # Sort files to ensure they are in numeric order
     files = sorted(os.listdir(hist_path), key=lambda x: int(Path(x).stem))
-
     for file in files:
         file_path = os.path.join(hist_path, file)
         with open(file_path, 'rb') as reader:
@@ -139,3 +139,5 @@ def load_histograms(hist_path):
             hist_list.append(histogram)
     
     return hist_list
+
+
