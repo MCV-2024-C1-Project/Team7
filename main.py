@@ -1,7 +1,6 @@
 import os
 import argparse
-from src.utils.histograms import load_histograms
-from src.utils.distance_matrix import create_distance_matrix, generate_results, generate_submission
+from src.utils.distance_matrix import load_histograms, create_distance_matrix, generate_results, generate_submission
 
 
 def parse_args():
