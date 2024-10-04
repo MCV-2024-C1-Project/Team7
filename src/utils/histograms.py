@@ -2,6 +2,7 @@ import os
 import cv2
 import pickle
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 def create_histo_dir(base_dir, color_space, dataset):
     # Create directory for the specific color space to save histograms 
@@ -110,3 +111,30 @@ def process_images(path, base_output_dir, color_space='LAB', dataset="any", plot
             if plot:
                 plot_histograms(histograms, color_space, filename)
 
+def load_histograms(hist_path):
+    """
+    Loads all the saved histograms at a directory
+    
+    Parameters
+    ----------
+    hist_path : str
+        Relative path to the histogram directory
+
+    Returns
+    -------
+    list
+        A list with all the histograms in the directory
+    """
+    hist_list = []
+
+    # Sort files to ensure they are in numeric order
+    files = sorted(os.listdir(hist_path), key=lambda x: int(Path(x).stem))
+
+    for file in files:
+        file_path = os.path.join(hist_path, file)
+        with open(file_path, 'rb') as reader:
+            histogram = pickle.load(reader)
+            histogram = np.concatenate(histogram) # Ensure it's 1D
+            hist_list.append(histogram)
+    
+    return hist_list

@@ -7,33 +7,6 @@ from pathlib import Path
 # -> is a comentary
 ## -> is a doubt
 
-def load_histograms(hist_path):
-    """
-    Loads all the saved histograms at a directory
-    
-    Parameters
-    ----------
-    hist_path : str
-        Relative path to the histogram directory
-
-    Returns
-    -------
-    list
-        A list with all the histograms in the directory
-    """
-    hist_list = []
-
-    # Sort files to ensure they are in numeric order
-    files = sorted(os.listdir(hist_path), key=lambda x: int(Path(x).stem))
-
-    for file in files:
-        file_path = os.path.join(hist_path, file)
-        with open(file_path, 'rb') as reader:
-            histogram = pickle.load(reader)
-            histogram = np.concatenate(histogram) # Ensure it's 1D
-            hist_list.append(histogram)
-    
-    return hist_list
 
 def create_distance_matrix(query_list, bd_list, method):
     """
@@ -103,10 +76,13 @@ def generate_submission(similarity_matrix, k_val, output_path='result.pkl'):
     output_path : str
         Relative path to save the submission file
     """
+    #generate predictions
     results = generate_results(similarity_matrix)
     submission = np.array(results)[:,:k_val].tolist()
     writer = open(output_path, 'wb')
     pickle.dump(submission, writer)
     writer.close()
+
+    return submission
 
 

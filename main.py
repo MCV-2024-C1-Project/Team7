@@ -51,12 +51,8 @@ def main():
     # Compute similarity matrix
     similarity_matrix = create_distance_matrix(query_list, bbdd_list, method_idx)
 
-    # Generate predictions
-    query_predictions = generate_results(similarity_matrix)
-
     # Generate submission results
-    generate_submission(query_predictions, args.k_val, args.results_file)
-
+    generate_submission(similarity_matrix, args.k_val, args.results_file)
 
 if __name__ == "__main__":
     main()
