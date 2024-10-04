@@ -60,7 +60,7 @@ def generate_results(similarity_matrix):
         result.append(np.argsort(row)[::-1])
     return result
 
-def generate_submission(similarity_matrix, k_val, output_path='result.pkl'):
+def generate_submission(similarity_matrix, k_val, output_path='week1/QST1/method1/result.pkl'):
     """
     Generates a submission pkl file with the top K predictions
     (sorted from most probable to least) for each query.
