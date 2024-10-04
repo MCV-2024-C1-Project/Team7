@@ -130,7 +130,6 @@ def load_histograms(hist_path):
 
     # Sort files to ensure they are in numeric order
     files = sorted(os.listdir(hist_path), key=lambda x: int(Path(x).stem))
-
     for file in files:
         file_path = os.path.join(hist_path, file)
         with open(file_path, 'rb') as reader:
@@ -140,24 +139,4 @@ def load_histograms(hist_path):
     
     return hist_list
 
-def combinate_histograms_with_Gray():
-    gray_path = ".\data\histograms\BBDD\GRAY"
-    files = sorted(os.listdir(gray_path), key=lambda x: int(Path(x).stem))
-
-    for file in files:
-        file_path = os.path.join(gray_path, file)
-        with open(file_path, 'rb') as reader:
-            gray_histogram = pickle.load(reader)
-        reader.close()
-
-        for repr in ['HSV', 'LAB', 'RGB', 'YCrCb']:
-            comb_path = os.path.join(".\data\histograms\BBDD",repr,file)
-            
-            with open(comb_path, 'rb') as reader:
-                comb_histogram = pickle.load(reader)
-                comb_histogram = np.append(comb_histogram, [gray_histogram], axis=0)
-                saving_direct = ".\data\histograms\BBDD\GRAY"+repr
-                os.makedirs(saving_direct, exist_ok=True)
-                save_histograms(comb_histogram, file, saving_direct)
-            reader.close()
 

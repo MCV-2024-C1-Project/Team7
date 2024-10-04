@@ -1,5 +1,6 @@
 import os
 import argparse
+import numpy as np
 from src.utils.histograms import load_histograms
 from src.utils.distance_matrix import create_distance_matrix, generate_results, generate_submission
 from src.utils.score_painting_retrieval import compute_mapk
@@ -31,11 +32,11 @@ def main():
     if not (0 < args.k_val <= 288):
         raise ValueError("The k-value must be a positive integer less than or equal to 288")
     for method in ['Correlation', 'Chi-Square', 'Intersection', 'Bhattacharyya', 'Hellinger']:
-        #['GRAY', 'HSV', 'LAB', 'RGB', 'YCrCb','GRAYHSV','GRAYLAB','GRAYRGB','GRAYYCrCb']
-        for color_space in ['GRAY', 'HSV', 'LAB', 'RGB', 'YCrCb']:
+        for color_space in ['GRAY', 'HSV', 'LAB', 'RGB', 'YCrCb','GRAYHSV','GRAYLAB','GRAYRGB','GRAYYCrCb']:
+        #for color_space in ['GRAY', 'HSV', 'LAB', 'RGB', 'YCrCb']:
             # Mapping similarity measure to method index
             method_idx = ['Correlation', 'Chi-Square', 'Intersection', 'Bhattacharyya', 'Hellinger'].index(method)
-
+            print(method,"---",color_space,":")
             # Set directories for the histograms
             bbdd_hist_dir = os.path.join('data', 'histograms', 'BBDD', color_space)
             queries_hist_dir = os.path.join('data', 'histograms', args.queries_hist_dir, color_space)
@@ -51,12 +52,13 @@ def main():
             with open(gt_dir, 'rb') as reader:
                 ground_truth = pickle.load(reader)
 
-            results = generate_results(similarity_matrix)
-            results = generate_submission(results, args.k_val)
+            results = np.array(generate_results(similarity_matrix)).tolist()
+            #results = generate_submission(results, args.k_val)
             #print(ground_truth)
             #print(results)
+            #print("len: ",len(results))
             mapk = compute_mapk(ground_truth, results, args.k_val)
-            print(method,"---",color_space,":")
+
             print("MAPK: ",mapk)
 
 
