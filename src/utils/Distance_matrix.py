@@ -3,21 +3,17 @@ import numpy as np
 import pickle
 import os
 
-
-# -> is a comentary
-## -> is a doubt
-
-
 def create_distance_matrix(query_list, bd_list, method):
     """
-    Loads a query and computes the similarity with all the histograms of the existing images
+    Computes the similarity between a list of query histograms and a list 
+    of database histograms.
 
     Parameters
     ----------
     query_list : list
-        List of all the query histograms
+        List of all the query 1D histograms
     bd_list : list
-        List that contains the histograms of the BD
+        List that contains the 1D histograms of the DB
     method : int
         Specifies which similarity method to use
         1. Correlation
@@ -28,8 +24,8 @@ def create_distance_matrix(query_list, bd_list, method):
 
     Returns
     -------
-    ndarray
-        Matrix with all the similarity values
+    similarity_matrix: ndarray
+        Matrix with all the similarity values.
     """
     # A row for each query and a column for each element in the DB to search
     similarity_matrix = np.zeros((len(query_list), len(bd_list)))
@@ -52,8 +48,8 @@ def generate_results(similarity_matrix):
     
     Returns
     -------
-    list
-        contains sorted lists of indexes by score of the similarity matrix
+    result: list
+        A list containing sorted lists of indexes by score of the similarity matrix.
     """
     result = []
     for row in similarity_matrix:
@@ -70,11 +66,17 @@ def generate_submission(results, k_val, output_path='result.pkl'):
     Parameters
     ----------
     results : ndarray
-        Sorted lists of indexes by score of the similarity matrix
+        List of sorted lists of indexes by score of the similarity matrix
     k_val : int
         Number of top predictions to save
     output_path : str
         Relative path to save the submission file
+
+    Returns
+    -------
+    submission: list of lists
+        A list of lists where each sublist contains the the top K predicted
+        indexes for a query.
     """
     #generate predictions
     submission = np.array(results)[:,:k_val].tolist()
@@ -83,6 +85,3 @@ def generate_submission(results, k_val, output_path='result.pkl'):
     writer.close()
 
     return submission
-
-
-
