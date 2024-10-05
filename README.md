@@ -55,7 +55,7 @@ The following figure represents the decomposition of an image in the three chann
 
 ![Example of the CIELAB channel decomposition of an image](figs/CIELAB_example.png)
 
-#### Method 2: GRAY and RGB
+#### Method 2: GRAY + RGB
 In Method 2, we combine [Grayscale](https://en.wikipedia.org/wiki/Grayscale) and [RGB](https://en.wikipedia.org/wiki/RGB_color_model) representations. Grayscale focuses on intensity, highlighting textures and patterns, while RGB retains essential color information. This combination provides a balanced approach, leveraging texture and color details.
 
 - __Red Channel__: Contains the intensity of red hues in the image. Brighter areas represent stronger red content.
@@ -76,13 +76,13 @@ $$
 
 ### Task 3
 In task three, the similarity between the queries and all the images in the database is computed according to the described criteria in the two previous tasks. The top ``K`` predictions for each query (i.e., the indices of the ``K`` most similar histograms for each of the queries, sorted) are returned by the function ``generate_results()``. These results allow us to compute the mAP@K. The necessary computations are encapsulated in ``test_methods.py``. The obtained values for the mAP@K with the pre-selected methods are the following:
-|                                   |  mAP@1  |  mAP@5  |
-|-----------------------------------|---------|---------|
-| Method 1 (Correlation & CIELAB)   |  0.300  |  0.326  |
-| Method 2 (Correlation & GRAY+RBG) |  0.300  |  0.351  |
+|                                     |  mAP@1  |  mAP@5  |
+|-------------------------------------|---------|---------|
+| Method 1 (Correlation & CIELAB)     |  0.300  |  0.326  |
+| Method 2 (Correlation & GRAY + RBG) |  0.300  |  0.351  |
 
 ### Task 4
-The creation of the submition for the blind competition is done in the ```main.py``` file. Remember to execute the file ```create_histograms.py``` before.
+The creation of the submition for the blind competition is done in the ``main.py`` file. It generates a ``pkl`` file that contains a list of lists, where each of them corresponds to a query, and the inner values represent the indices of the predicted images for that query (sorted from most to least confident). Remember to execute the file ``create_histograms.py`` once before running ``main.py``.
 
 ## Files in this project
 Here you can find a bief description of the files that we created to solve this week's tasks.
