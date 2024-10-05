@@ -87,12 +87,16 @@ The creation of the submition for the blind competition is done in the ``main.py
 ## Files in this project
 Here you can find a bief description of the files that we created to solve this week's tasks.
 
-### distance_matrix.py
-### histograms.py
-### create_histogram.py
-### main.py
+#### ``create_histograms.py``
+Generates and saves color histograms for images using different color spaces (e.g., RGB, LAB, HSV, YCrCb, and Grayscale). It includes two main functions:
+- ``create_basic_histograms()``: Processes images from different datasets and computes histograms for each color space.
+- ``create_gray_combined_histograms()``: Combines grayscale histograms with histograms from other color spaces and saves the resulting combined histograms.
 
-## Extra functionalities
-The code in this repository also includes some extra functions that are not needed to solve the compulsory tasks for this project, but that have been used to generate visualizations. They are described below.
+The histograms are saved to a specified directory and can be optionally plotted.
 
-* ```plot_histograms```: makes possible the visualization of the histogram extracted from an image. If there is more than one chanel the histograms appear in the same plot.
+#### ``distance_matrix.py``
+
+- ``histograms.py``:
+- ``ml_metrics.py``:
+- ``plot_colorspace_figures.py``:
+- ``score_painting_retrieval``:
