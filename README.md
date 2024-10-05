@@ -75,11 +75,13 @@ As before, the figure below shows the RGB channels of an image and its grayscale
 ![Example of the RGB channel decomposition and grayscale version of an image](figs/RGB_grey_example.png)
 
 ### Task 2
-Task two consisted on choosing between different similarity measures that would be used to compute the likeliness of the histograms. The measure we chose is correlation, which is defined as:
+Task two consisted on choosing between different similarity measures that would be used to compute the likeliness of the histograms. The measure we have chosen is correlation, which is defined as:
 
 $$
 d(H_1, H_2) = \frac{\sum_I (H_1(I) - \bar{H}_1)(H_2(I) - \bar{H}_2)}{\sqrt{\sum_I (H_1(I) - \bar{H}_1)^2 \sum_I (H_2(I) - \bar{H}_2)^2}}
 $$
+
+Even though our theoretical explorations pointed at Bhattacharyya as a well suited metric for this task, as it is tolerant to noise and outliers, correlation has proved to perform better after executing a set of emprical tests using `test_methods.py`.
 
 ### Task 3
 In task three, the similarity between the queries and all the images in the database is computed according to the described criteria in the two previous tasks. The top ``K`` predictions for each query (i.e., the indices of the ``K`` most similar histograms for each of the queries, sorted) are returned by the function ``generate_results()``. These results allow us to compute the mAP@K. The necessary computations are encapsulated in ``test_methods.py``. The obtained values for the mAP@K with the pre-selected methods are the following:
@@ -115,7 +117,7 @@ Includes a set of functions to create and manage the histograms for each color r
 #### ``test_methods.py``
 Tests all the possible pairs of similarty measures and color spaces. For a given pair and value of K, it provides the MAP@K. This script is useful to empirically test which combination works for the task at hand.
 
-#### ```main.py``
+#### ``main.py``
 Generates a sumbission file for certain set of queries, color space, similarity measure and K value. Store the results in the sumbission format in the specified path.
 
 #### ``plot_colorspace_figures.py``
