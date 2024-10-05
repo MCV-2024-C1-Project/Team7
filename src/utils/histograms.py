@@ -17,7 +17,7 @@ def change_color_space(image, color_space):
     # Change the color space of an image 
     
     if color_space == 'RGB':
-        return image  #Comprovar q al llegir amb cv2 sigui rgb i q no canvii ordre de canals
+        return image
     elif color_space == 'LAB':
         return cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
     elif color_space == 'HSV':
@@ -31,6 +31,7 @@ def change_color_space(image, color_space):
 
 def get_histograms(image, color_space):
     # Compute histograms for each channel
+    # Returns a list of lists if there is more than one channel
 
     # For when there's only one channel, as is the case of greyscale
     if len(image.shape) == 2:  
@@ -42,8 +43,6 @@ def get_histograms(image, color_space):
         for c in range(channels):
             h = cv2.calcHist([image], [c], None, [256], (0, 256))
             histograms.append(h)
-        #histograms =  FALTARIA CONCATENAR SI VOLEM Q SIGUI 1D, ARA TINC LLISTA DE LLISTES XQ HAVIA FET PLOTS
-
     
     return histograms
 
@@ -80,15 +79,25 @@ def save_histograms(histograms, filename, output_dir):
     with open(hist_path, 'wb') as f:
         pickle.dump(histograms, f)
 
+# Main function
 def process_images(path, base_output_dir, color_space='LAB', dataset="any", plot=False):
-    # "Main"
     """
-    Parameters:
-    - path: Directory containing the input images.
-    - base_output_dir: Base directory to store histograms.
-    - color_space: The color space to use to get histograms.
-    - dataset: The dataset the images are from. Used to create subfolders.
-    - plot: Whether to plot the histograms for each image.
+    Generates the color histograms (for a specific color space) for all the
+    images in a directory and saves them in a specific folder in pkl format.
+
+    Parameters
+    ----------
+    path : str
+        Directory containing the input images.
+    base_output_dir : str
+        Base directory where histograms will be stored.
+    color_space : str, optional
+        The color space to use when generating histograms. Default is 'LAB'.
+    dataset : str, optional
+        The dataset the images belong to. Used to create subfolders within the 
+        base output directory. Default is 'any'.
+    plot : bool, optional
+        If True, the histograms will be plotted for each image. Default is False.
     """
 
     # Create the directory to later save histograms
@@ -139,5 +148,3 @@ def load_histograms(hist_path):
             hist_list.append(histogram)
     
     return hist_list
-
-
