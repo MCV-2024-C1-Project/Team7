@@ -40,15 +40,15 @@ It is required to have downloaded the three DB (BBDD, qsd1_w1, qst1_w1) and to h
  
 However, the subsequent tasks require the choice of only two color representations. In our case, the selected ones have been CIELAB and a combination of RGB and Grayscale.
 
-% TODO Posar imatges de la separació dels canals en els espais de color mencionats
-
 #### Method 1: CIELAB
 CIELAB was chosen for its perceptual uniformity, allowing for more accurate color comparisons that align with human vision (as the perceived difference is proportional to the distance in the space).
+
 ![Example of the CIELAB channel decomposition of an image](figs/CIELAB_example.png)
 
 
 #### Method 2: GRAY and RGB
 In Method 2, we combine Grayscale and RGB representations. Grayscale focuses on intensity, highlighting textures and patterns, while RGB retains essential color information. This combination provides a balanced approach, leveraging texture and color details.
+
 ![Example of the RGB channel decomposition and grayscale version of an image](figs/RGB_grey_example.png)
 
 ### Task 2
@@ -56,7 +56,7 @@ Task two consisted on choosing between different similarity measures that would 
 % TODO no sé gaire què comentar de la correlation
 
 #### Correlation
-$d(H_1, H_2) = \frac{\sum_i (H_1(i) - \overline{H}_1)(H_2(i) - \overline{H}_2)}{\sqrt{\sum_i (H_1(i) - \overline{H}_1)^2 \sum_i (H_2(i) - \overline{H}_2)^2}}$
+$d(H_1, H_2) = \frac{\sum_I (H_1(I) - \bar{H}_1)(H_2(I) - \bar{H}_2)}{\sqrt{\sum_I (H_1(I) - \bar{H}_1)^2 \sum_I (H_2(I) - \bar{H}_2)^2}}$
 
 ### Task 3
 In task three, the similarity between the queries and all the images in the database is computed according to the described criteria in the two previous tasks. The top ``K`` predictions for each query (i.e., the indices of the ``K`` most similar histograms for each of the queries, sorted) are returned by the function ``generate_results()``. These results allow us to compute the mAP@K. The obtained values for the mAP@K with the pre-selected methods are the following:
