@@ -40,14 +40,16 @@ python main.py \
 The goal of this week's task is to match pictures of paintings from a large image database with other image queries that feature those artworks. The resemblance between each query and each image in the database is assessed based on their visual content; specifically, the similarity between their color histograms.
 
 ### Task 1
-In task one, up to two methods could be chosen for computing the image descriptors (histograms). We decided to calculate all the histograms in advance for the following color representations: RGB, CIELAB, HSV, YCrCb, and Grayscale, so we could experiment if we wanted to. After the process of creation, the histograms are saved in pickle files. This is done by executing the ``create_histograms.py`` script and having the databases in the ``data`` directory.
+In task one, up to two methods could be chosen for computing the image descriptors (histograms). To decide which methods to use, we have carried out both theoretical and emprical explorations of the following 5 color representations: RGB, CIELAB, HSV, YCrCb, and Grayscale.
 
-It is required to have downloaded the three databases (BBDD, qsd1_w1, qst1_w1) and to have placed them in ``data`` in order to execute the script. After the execution, the files will be distributed as the following:
+On one hand, the theoretical exploration has consisted in determining which color space is "best" in terms of their theoretical properties. In this case, "best" corresponds to the folling heuristic: the best color space will be the one with characteristics most similar to human perception.
+
+On the other hand, for the emprical exploration, we decided to calculate all the histograms in advance for the following color representations: RGB, CIELAB, HSV, YCrCb, and Grayscale, as well as combinations of Grayscale and the other four, so we could experiment with them. After creating them, the histograms are saved in pickle files. This is done by executing the ``create_histograms.py`` script (it is required to have downloaded the three databases (BBDD, qsd1_w1, qst1_w1) and to have placed them in ``data`` in order to execute the script). After the execution, the files will be distributed as follows:
 ```
 data/histograms/<DataBaseFolderName>/<ColorRepresentation>/<OriginalFileName>.pkl
 ```
 
-Although the code in ``create_histograms.py`` generates the histograms for five different color spaces, the subsequent tasks require the choice of only two color representations. In our case, the selected ones have been CIELAB and a combination of RGB and Grayscale.
+Although the code in ``create_histograms.py`` generates the histograms for five different color spaces, as well as combinations of grey and other colors, the subsequent tasks require choosing only two methods. In our case, according to our theoretical and empirical explorations, the selected ones have been CIELAB and a combination of RGB and Grayscale.
 
 #### Method 1: CIELAB
 [CIELAB](https://en.wikipedia.org/wiki/CIELAB_color_space) was chosen for its perceptual uniformity, allowing for more accurate color comparisons that align with human vision (as the perceived difference is proportional to the distance in the space).
