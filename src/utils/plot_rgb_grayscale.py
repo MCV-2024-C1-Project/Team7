@@ -19,34 +19,63 @@ def plot_image_and_channel_decomposition(image_path):
     B_channel = image_array[:, :, 2]  # Blue channel
     
     # Plot the original image and RGB channels with grayscale
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(12, 10))  # Increased height for histograms
 
-    # Original image at the top center
-    plt.subplot(2, 1, 1)
+    # Original image spanning two columns at the top center
+    plt.subplot(3, 4, (2, 3))  # Centered by spanning columns 2 and 3
     plt.imshow(original_image)
     plt.title('Original Image')
     plt.axis('off')
 
     # Plot RGB channels and grayscale in a single row below
-    plt.subplot(2, 4, 5)
+    plt.subplot(3, 4, 5)
     plt.imshow(R_channel, cmap='Reds')
     plt.title('Red Channel')
     plt.axis('off')
 
-    plt.subplot(2, 4, 6)
+    plt.subplot(3, 4, 6)
     plt.imshow(G_channel, cmap='Greens')
     plt.title('Green Channel')
     plt.axis('off')
 
-    plt.subplot(2, 4, 7)
+    plt.subplot(3, 4, 7)
     plt.imshow(B_channel, cmap='Blues')
     plt.title('Blue Channel')
     plt.axis('off')
 
-    plt.subplot(2, 4, 8)
+    plt.subplot(3, 4, 8)
     plt.imshow(grayscale_image, cmap='gray')
     plt.title('Grayscale Image')
     plt.axis('off')
+
+    # Plot histograms for each channel
+    plt.subplot(3, 4, 9)  # Histogram for Red channel
+    plt.hist(R_channel.flatten(), bins=256, color='red', alpha=0.6)
+    plt.title('Histogram of Red Channel')
+    plt.xlim(0, 1)  # RGB channels range from 0 to 1
+    plt.xlabel('Intensity')
+    plt.ylabel('Frequency')
+
+    plt.subplot(3, 4, 10)  # Histogram for Green channel
+    plt.hist(G_channel.flatten(), bins=256, color='green', alpha=0.6)
+    plt.title('Histogram of Green Channel')
+    plt.xlim(0, 1)  # RGB channels range from 0 to 1
+    plt.xlabel('Intensity')
+    plt.ylabel('Frequency')
+
+    plt.subplot(3, 4, 11)  # Histogram for Blue channel
+    plt.hist(B_channel.flatten(), bins=256, color='blue', alpha=0.6)
+    plt.title('Histogram of Blue Channel')
+    plt.xlim(0, 1)  # RGB channels range from 0 to 1
+    plt.xlabel('Intensity')
+    plt.ylabel('Frequency')
+
+    plt.subplot(3, 4, 12)  # Histogram for Grayscale channel
+    plt.hist(grayscale_image.flatten(), bins=256, color='gray', alpha=0.6)
+    plt.title('Histogram of Grayscale Image')
+    plt.xlim(0, 1)  # Grayscale ranges from 0 to 1
+    plt.xlabel('Intensity')
+    plt.ylabel('Frequency')
 
     plt.tight_layout()
     plt.show()

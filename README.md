@@ -21,7 +21,12 @@ python create_histograms.py
 
 ### Run the main code
 ```
-main.py --queries-hist-dir qst1_w1 --color-space LAB --similarity-measure Correlation --k-val 10 --results-file result.pkl
+main.py \
+--queries-hist-dir qst1_w1 \
+--color-space LAB \
+--similarity-measure Correlation \
+--k-val 10 \
+--results-file result.pkl
 ```
 
 ## Module C1 - Week 1
