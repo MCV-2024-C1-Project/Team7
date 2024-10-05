@@ -2,8 +2,7 @@ import os
 import argparse
 import numpy as np
 from src.utils.histograms import load_histograms
-from src.utils.Distance_matrix import create_distance_matrix, generate_results, generate_submission
-from src.utils.score_painting_retrieval import compute_mapk
+from src.utils.distance_matrix import create_distance_matrix, generate_results
 from src.utils.ml_metrics import mapk
 import pickle
 
@@ -24,7 +23,6 @@ def parse_args():
 
     return parser.parse_args()
 
-
 def main():
     # Parse arguments
     args = parse_args()
@@ -32,12 +30,20 @@ def main():
     # Argument validation
     if not (0 < args.k_val <= 288):
         raise ValueError("The k-value must be a positive integer less than or equal to 288")
-    for method in ['Correlation', 'Chi-Square', 'Intersection', 'Bhattacharyya', 'Hellinger']:
+    
+    # Retrieve groundtruth for specified queries directory
+    gt_dir = os.path.join('data', args.queries_hist_dir, 'gt_corresps.pkl')
+    with open(gt_dir, 'rb') as reader:
+        ground_truth = pickle.load(reader)
+    
+    # For all similarity distances
+    for method in ['Correlation', 'Chi-Square', 'Intersection', 'Bhattacharyya', 'Hellinger']:      
+        # For all color spaces
         for color_space in ['GRAY', 'HSV', 'LAB', 'RGB', 'YCrCb','GRAYHSV','GRAYLAB','GRAYRGB','GRAYYCrCb']:
-        #for color_space in ['GRAY', 'HSV', 'LAB', 'RGB', 'YCrCb']:
             # Mapping similarity measure to method index
             method_idx = ['Correlation', 'Chi-Square', 'Intersection', 'Bhattacharyya', 'Hellinger'].index(method)
-            print(method,"---",color_space,":")
+            print(f'{method}{" --- "}{color_space:<12}', end=" ")
+            
             # Set directories for the histograms
             bbdd_hist_dir = os.path.join('data', 'histograms', 'BBDD', color_space)
             queries_hist_dir = os.path.join('data', 'histograms', args.queries_hist_dir, color_space)
@@ -49,15 +55,14 @@ def main():
             # Compute similarity matrix
             similarity_matrix = create_distance_matrix(query_list, bbdd_list, method_idx)
 
-            gt_dir = os.path.join('data', args.queries_hist_dir, 'gt_corresps.pkl')
-            with open(gt_dir, 'rb') as reader:
-                ground_truth = pickle.load(reader)
-
+            # Get ordered index matrix
             results = np.array(generate_results(similarity_matrix)).tolist()
 
+            # Compute the MAP@K metric
             mapk_val = mapk(ground_truth, results, args.k_val)
 
             print("MAPK: ", mapk_val)
+        print("\n")
 
 
 if __name__ == "__main__":
