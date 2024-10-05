@@ -13,18 +13,45 @@ color_spaces = ['RGB', 'LAB', 'HSV', 'YCrCb', 'GRAY']
 plot = False
 
 def create_basic_histograms(datasets, color_spaces, data_dir, output_dir, plot):
-    # Generate histograms for all methods for all datasets
-    # using the basic color spaces
+    """
+    Generates histograms for all methods for all datasets
+    using the basic color spaces
 
+    Parameters
+    ----------
+    datasets : list
+        List of dataset names to be processed. Each dataset corresponds to 
+        a subdirectory within the `data_dir`.
+    color_spaces : list
+        List of color spaces to use for generating histograms.
+    data_dir : str
+        Path to the base directory where the dataset folders are stored.
+    output_dir : str
+        Directory where the generated histograms will be saved.
+    plot : bool
+        If True, the histograms will be displayed. 
+        If False, histograms will only be saved.
+    """
     for color_space in color_spaces:
         for dataset in datasets:
             image_directory = os.path.join(data_dir, dataset)
             process_images(image_directory, output_dir, color_space, dataset, plot)
 
 def create_gray_combined_histograms(datasets, color_spaces, input_dir):
-    # Generate combinations of histograms mixing gray
-    # histograms with the basic color spaces
+    """
+    Generates combinations of histograms mixing gray
+    histograms with the basic color spaces.
 
+    Parameters
+    ----------
+    datasets : list
+        List of dataset names to be processed. Each dataset corresponds to a 
+        subdirectory within the `input_dir`.
+    color_spaces : list
+        List of color spaces to combine with the grayscale histograms.
+    input_dir : str
+        Path to the directory where the dataset basic histogram files are stored.
+    """
     # For each dataset
     for dataset in datasets:
         # Retrieve gray histogram files
