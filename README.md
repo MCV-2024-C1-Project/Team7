@@ -67,11 +67,11 @@ Task two consisted on choosing between different similarity measures that would 
 $d(H_1, H_2) = \frac{\sum_I (H_1(I) - \bar{H}_1)(H_2(I) - \bar{H}_2)}{\sqrt{\sum_I (H_1(I) - \bar{H}_1)^2 \sum_I (H_2(I) - \bar{H}_2)^2}}$
 
 ### Task 3
-In task three, the similarity between the queries and all the images in the database is computed according to the described criteria in the two previous tasks. The top ``K`` predictions for each query (i.e., the indices of the ``K`` most similar histograms for each of the queries, sorted) are returned by the function ``generate_results()``. These results allow us to compute the mAP@K. The obtained values for the mAP@K with the pre-selected methods are the following:
-|          | mAP@1 | mAP@5 |
-|----------|-------|-------|
-| Method 1 |       |       |
-| Method 2 |       |       |
+In task three, the similarity between the queries and all the images in the database is computed according to the described criteria in the two previous tasks. The top ``K`` predictions for each query (i.e., the indices of the ``K`` most similar histograms for each of the queries, sorted) are returned by the function ``generate_results()``. These results allow us to compute the mAP@K. The necessary computations are encapsulated in ``test_methods.py``. The obtained values for the mAP@K with the pre-selected methods are the following:
+|                                   |  mAP@1  |  mAP@5  |
+|-----------------------------------|---------|---------|
+| Method 1 (Correlation & CIELAB)   |  0.300  |  0.326  |
+| Method 2 (Correlation & GRAY+RBG) |  0.300  |  0.351  |
 
 ### Task 4
 The creation of the submition for the blind competition is done in the ```main.py``` file. Remember to execute the file ```create_histograms.py``` before.
