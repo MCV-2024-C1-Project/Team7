@@ -102,8 +102,24 @@ Generates and saves color histograms for images using different color spaces (e.
 The histograms are saved to a specified directory and can be optionally plotted.
 
 #### ``distance_matrix.py``
+Encapsulates all the funcions related to the calculation of distances between images in terms of histograms. This information is organized using distance matrices. It includes three main functions:
+- ``create_distance_matrix()``: Computes the similarity between a set of queries and the rest of the images.
+- ``generate_results()``: Generates a matrix of ordered indexes representing the predictions per query.
+- ``generate_sumbission()``: Uses the results from the previous function and formats them according to the sumbission rules.
 
-- ``histograms.py``:
-- ``ml_metrics.py``:
-- ``plot_colorspace_figures.py``:
-- ``score_painting_retrieval``:
+#### ``histograms.py``
+Includes a set of functions to create and manage the histograms for each color representation. The two main functions are the following:
+- ``process_images()``: Generates the color histograms for a specific color space for all the images in a given directory. It uses many other helper function present in the file.
+- ``load_histograms()``: Loads all the saved histograms in a particular directory.
+
+#### ``test_methods.py``
+Tests all the possible pairs of similarty measures and color spaces. For a given pair and value of K, it provides the MAP@K. This script is useful to empirically test which combination works for the task at hand.
+
+#### ```main.py``
+Generates a sumbission file for certain set of queries, color space, similarity measure and K value. Store the results in the sumbission format in the specified path.
+
+#### ``plot_colorspace_figures.py``
+Contains functions to plot an original image along the histograms for the channels of different color spaces.
+
+#### ``ml_metrics.py``
+Contains the functions ``apk()`` and ``mapk()`` necessary to correctly calculate the MAP@K metric. These functions correspond to the ones present in the given GitHub repository: https://github.com/benhamner/Metrics.
