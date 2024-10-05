@@ -15,8 +15,8 @@ def parse_args():
                         default='qsd1_w1')
     
     parser.add_argument('--color-space', type=str,
-                        choices=['GRAY', 'HSV', 'LAB', 'RGB', 'YCrCb'],
-                        help="The color space to be used. Choose from: GRAY, HSV, LAB, RGB, YCrCb",
+                        choices=['GRAY', 'HSV', 'LAB', 'RGB', 'YCrCb', 'GRAYHSV', 'GRAYLAB', 'GRAYRGB', 'GRAYYCrCb'],
+                        help="The color space to be used. Choose from: GRAY, HSV, LAB, RGB, YCrCb, GRAYHSV, GRAYLAB, GRAYRGB, GRAYYCrCb",
                         default='LAB')
 
     parser.add_argument('--similarity-measure', type=str,
