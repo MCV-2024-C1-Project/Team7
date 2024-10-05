@@ -71,7 +71,8 @@ In task three, the similarity between the queries and all the images in the data
 ### Task 4
 The creation of the submition for the blind competition is done in the ```main.py``` file. Remember to execute the file ```create_histograms.py``` before.
 
-## New files
+## Files in this project
+Here you can find a bief description of the files that
 ### distance_matrix.py
 ### histograms.py
 ### create_histogram.py
