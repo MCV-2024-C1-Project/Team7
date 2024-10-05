@@ -44,12 +44,12 @@ However, the subsequent tasks require the choice of only two color representatio
 
 #### Method 1: CIELAB
 CIELAB was chosen for its perceptual uniformity, allowing for more accurate color comparisons that align with human vision (as the perceived difference is proportional to the distance in the space).
-![Example of the CIELAB channel decomposition of an image](figs/CIELAB_example.jpg)
+![Example of the CIELAB channel decomposition of an image](figs/CIELAB_example.png)
 
 
 #### Method 2: GRAY and RGB
 In Method 2, we combine Grayscale and RGB representations. Grayscale focuses on intensity, highlighting textures and patterns, while RGB retains essential color information. This combination provides a balanced approach, leveraging texture and color details.
-![Example of the RGB channel decomposition and grayscale version of an image](figs/RGB_grey_example.jpg)
+![Example of the RGB channel decomposition and grayscale version of an image](figs/RGB_grey_example.png)
 
 ### Task 2
 Task two consisted on choosing between different similarity measures that would be used to compute the likeliness of the histograms. The measure we chose is correlation.
