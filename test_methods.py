@@ -18,14 +18,14 @@ def parse_args():
     parser.add_argument('--k-val', type=int, required=True,
                         help="The number of top results to retrieve (k-value)")
 
-    parser.add_argument('--results-file', type=str, required=True,
-                        help="File to save the retrieval results")
-
     return parser.parse_args()
 
 def main():
     # Parse arguments
     args = parse_args()
+
+    # File to save the retrieval results
+    results_file = f"data/test_methods_results_{args.queries_hist_dir}_K{args.k_val}.pkl"
 
     # Argument validation
     if not (0 < args.k_val <= 288):
@@ -35,6 +35,10 @@ def main():
     gt_dir = os.path.join('data', args.queries_hist_dir, 'gt_corresps.pkl')
     with open(gt_dir, 'rb') as reader:
         ground_truth = pickle.load(reader)
+
+    # The metrics are saved in a list of list. Each sublist is an experiment
+    # resulting of the combination of a color space, a distance metric and a K.
+    full_results = []
     
     # For all similarity distances
     for method in ['Correlation', 'Chi-Square', 'Intersection', 'Bhattacharyya', 'Hellinger']:      
@@ -61,8 +65,16 @@ def main():
             # Compute the MAP@K metric
             mapk_val = mapk(ground_truth, results, args.k_val)
 
+            # Save results
+            full_results.append([method, color_space, args.k_val, mapk_val])
+
             print("MAPK: ", mapk_val)
-        print("\n")
+        print(" ")
+
+    # Save full results (list of lists) to a pkl file
+    with open(results_file, "wb") as file:
+        pickle.dump(full_results, file)
+    print(f"Full results saved to {results_file}")
 
 
 if __name__ == "__main__":
