@@ -15,15 +15,20 @@ sudo apt install python3-pip
 pip install -r requirements.txt
 ```
 
+### Organize datasets
+By default, the scripts assume a specific structure: create a file named ``data`` at the top level of the repository. Then, place the datasets ``BBDD``, ``qsd1_w1`` and ``qst1_w1`` inside the folder ``data``. This structure can be modified if needed.
+
 ### Generate histograms
+To generate the necessary 1D histograms to perform the comparisons between images, run:
 ```
 python create_histograms.py
 ```
+This will create a folder called ``histograms`` inside the ``data`` folder. The histograms are saved in ``.pkl`` format and organized in subfolders according to the dataset they come from and the type of histogram (gray, RGB, etc.).
 
 ### Run the main code
 The arguments shown in the following command line are the ones by default. Use ``python main.py -h`` to see all the possible arguments.
 ```
-main.py \
+python main.py \
 --queries-hist-dir qst1_w1 \
 --color-space LAB \
 --similarity-measure Correlation \
@@ -32,7 +37,7 @@ main.py \
 ```
 
 ## This week's task
-The goal of this week's task is to match pictures of paintings from a large image database with other image queries that feature those artworks. The resemblance between each query and each image in the database is assessed based on their visual content; specifically, the similarity between their histograms.
+The goal of this week's task is to match pictures of paintings from a large image database with other image queries that feature those artworks. The resemblance between each query and each image in the database is assessed based on their visual content; specifically, the similarity between their color histograms.
 
 ### Task 1
 In task one, up to two methods could be chosen for computing the image descriptors (histograms). We decided to calculate all the histograms in advance for the following color representations: RGB, CIELAB, HSV, YCrCb, and Grayscale, so we could experiment if we wanted to. After the process of creation, the histograms are saved in pickle files. This is done by executing the ``create_histograms.py`` script and having the databases in the ``data`` directory.
