@@ -45,12 +45,25 @@ data/histograms/<DataBaseFolderName>/<ColorRepresentation>/<OriginalFileName>.pk
 Although the code in ``create_histograms.py`` generates the histograms for five different color spaces, the subsequent tasks require the choice of only two color representations. In our case, the selected ones have been CIELAB and a combination of RGB and Grayscale.
 
 #### Method 1: CIELAB
-CIELAB was chosen for its perceptual uniformity, allowing for more accurate color comparisons that align with human vision (as the perceived difference is proportional to the distance in the space).
+[CIELAB](https://en.wikipedia.org/wiki/CIELAB_color_space) was chosen for its perceptual uniformity, allowing for more accurate color comparisons that align with human vision (as the perceived difference is proportional to the distance in the space).
+
+- __L* Channel__: Represents lightness, ranging from black (0) to white (100), showing the image's intensity without any color information.
+- __a* Channel__: Encodes color information on a red-green axis, where negative values indicate green and positive values indicate red.
+- __b* Channel__: Encodes color information on a blue-yellow axis, with negative values representing blue and positive values representing yellow.
+
+The following figure represents the decomposition of an image in the three channels in CIELAB. The histograms below each channel visualize the distribution of intensity values for the respective components of the image.
 
 ![Example of the CIELAB channel decomposition of an image](figs/CIELAB_example.png)
 
 #### Method 2: GRAY and RGB
-In Method 2, we combine Grayscale and RGB representations. Grayscale focuses on intensity, highlighting textures and patterns, while RGB retains essential color information. This combination provides a balanced approach, leveraging texture and color details.
+In Method 2, we combine [Grayscale](https://en.wikipedia.org/wiki/Grayscale) and [RGB](https://en.wikipedia.org/wiki/RGB_color_model) representations. Grayscale focuses on intensity, highlighting textures and patterns, while RGB retains essential color information. This combination provides a balanced approach, leveraging texture and color details.
+
+- __Red Channel__: Contains the intensity of red hues in the image. Brighter areas represent stronger red content.
+- __Green Channel__: Represents the intensity of green hues, where brighter areas have more green content.
+- __Blue Channel__: Shows the intensity of blue hues. Brighter areas indicate stronger blue content.
+- __Grayscale Image__: A representation of the image where all color information is removed, focusing solely on brightness (light and dark areas) across the entire image.
+
+As before, the figure below shows the RGB channels of an image and its grayscale version. The histograms illustrate the distribution of intensity values for each color or grayscale component.
 
 ![Example of the RGB channel decomposition and grayscale version of an image](figs/RGB_grey_example.png)
 
@@ -72,13 +85,14 @@ In task three, the similarity between the queries and all the images in the data
 The creation of the submition for the blind competition is done in the ```main.py``` file. Remember to execute the file ```create_histograms.py``` before.
 
 ## Files in this project
-Here you can find a bief description of the files that
+Here you can find a bief description of the files that we created to solve this week's tasks.
+
 ### distance_matrix.py
 ### histograms.py
 ### create_histogram.py
 ### main.py
-## Extra functionalities
 
-Aqui posem totes les coses extres que hem fet com lo de visualitzar histogrames i tota la pesca
+## Extra functionalities
+The code in this repository also includes some extra functions that are not needed to solve the compulsory tasks for this project, but that have been used to generate visualizations. They are described below.
 
 * ```plot_histograms```: makes possible the visualization of the histogram extracted from an image. If there is more than one chanel the histograms appear in the same plot.
