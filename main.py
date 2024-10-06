@@ -29,7 +29,7 @@ def parse_args():
 
     parser.add_argument('--results-file', type=str,
                         help="File to save the retrieval results",
-                        default=None)
+                        default='result.pkl')
 
     return parser.parse_args()
 
@@ -55,21 +55,14 @@ def main():
     # Compute similarity matrix
     similarity_matrix = create_distance_matrix(query_list, bbdd_list, method_idx)
 
-    # Dynamically generate the results file path if not provided
-    if not args.results_file:
-        results_dir = os.path.join('results', f"{args.queries_hist_dir}-{args.color_space}-{args.similarity_measure}")
-        results_file = os.path.join(results_dir, 'result.pkl')
-    else:
-        results_file = args.results_file
-
-    # Create results directory if it does not exist
-    results_dir = os.path.dirname(results_file)
-    if results_dir:
-        os.makedirs(results_dir, exist_ok=True)
+    # Set results directory
+    results_dir = os.path.join('results', f"{args.queries_hist_dir}-{args.color_space}-{args.similarity_measure}")
+    os.makedirs(results_dir, exist_ok=True)
+    results_path = os.path.join(results_dir, args.results_file)
 
     # Generate submission results
     results = generate_results(similarity_matrix)
-    generate_submission(results, args.k_val, results_file)
+    generate_submission(results, args.k_val, results_path)
 
 if __name__ == "__main__":
     main()

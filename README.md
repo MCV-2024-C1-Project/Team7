@@ -45,7 +45,7 @@ python main.py \
 --color-space LAB \
 --similarity-measure Correlation \
 --k-val 10 \
---results-file results/result.pkl
+--results-file results.pkl
 ```
 
 <h2 id="this-weeks-tasks">💡 This week's tasks</h2>
