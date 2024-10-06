@@ -2,7 +2,7 @@
 # Week 1
 [▶️ Code execution](#code-execution)
 
-[💡 This week's task](#this-weeks-task)
+[💡 This week's tasks](#this-weeks-tasks)
 - [Task 1](#task-1)
 - [Task 2](#task-2)
 - [Task 3](#task-3)
@@ -48,8 +48,8 @@ python main.py \
 --results-file results/result.pkl
 ```
 
-<h2 id="this-weeks-task">💡 This week's task</h2>
-The goal of this week's task is to match pictures of paintings from a large image database with other image queries that feature those artworks. The resemblance between each query and each image in the database is assessed based on their visual content; specifically, the similarity between their color histograms.
+<h2 id="this-weeks-tasks">💡 This week's tasks</h2>
+The goal of this week is to match pictures of paintings from a large image database with other image queries that feature those artworks. The resemblance between each query and each image in the database is assessed based on their visual content; specifically, the similarity between their color histograms.
 
 ### Task 1
 In task one, up to two methods could be chosen for computing the image descriptors (histograms). To decide which methods to use, we have carried out both theoretical and emprical explorations of the following 5 color representations: RGB, CIELAB, HSV, YCrCb, and Grayscale.
