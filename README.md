@@ -1,13 +1,24 @@
 # Master Computer Vision, Module C1
 # Week 1
+[▶️ Code execution](#code-execution)
 
-## Code execution
-### Install python and pip
+[💡 This week's task](#this-weeks-task)
+- [Task 1](#task-1)
+- [Task 2](#task-2)
+- [Task 3](#task-3)
+- [Task 4](#task-4)
+
+[📂 Files in this project](#files-in-this-project)
+
+## ▶️ Code execution
+### Clone the repository
 ```
-sudo apt install python3
+git clone https://github.com/MCV-2024-C1-Project/Team7
 ```
+
+### Move to the corresponding directory
 ```
-sudo apt install python3-pip
+cd Team7
 ```
 
 ### Install dependencies
@@ -23,10 +34,10 @@ To generate the necessary 1D histograms to perform the comparisons between image
 ```
 python create_histograms.py
 ```
-This will create a folder called ``histograms`` inside the ``data`` folder. The histograms are saved in ``.pkl`` format and organized in subfolders according to the dataset they come from and the type of histogram (gray, RGB, etc.).
+This will create a folder called ``histograms`` inside the ``data`` directory. The histograms are saved in ``.pkl`` format and organized in subfolders according to the dataset they come from and the type of histogram (gray, RGB, etc.).
 
 ### Run the main code
-The arguments shown in the following command line are the ones by default. Use ``python main.py -h`` to see all the possible arguments.
+The arguments shown in the following command line are the ones by default (which correspond to [Method 1](#method-1-cielab)). Use ``python main.py -h`` to see all the possible arguments.
 ```
 python main.py \
 --queries-hist-dir qst1_w1 \
@@ -36,7 +47,7 @@ python main.py \
 --results-file result.pkl
 ```
 
-## This week's task
+## 💡 This week's task
 The goal of this week's task is to match pictures of paintings from a large image database with other image queries that feature those artworks. The resemblance between each query and each image in the database is assessed based on their visual content; specifically, the similarity between their color histograms.
 
 ### Task 1
@@ -93,7 +104,7 @@ In task three, the similarity between the queries and all the images in the data
 ### Task 4
 The creation of the submition for the blind competition is done in the ``main.py`` file. It generates a ``pkl`` file that contains a list of lists, where each of them corresponds to a query, and the inner values represent the indices of the predicted images for that query (sorted from most to least confident). Remember to execute the file ``create_histograms.py`` once before running ``main.py``.
 
-## Files in this project
+## 📂 Files in this project
 Here you can find a bief description of the files that we created to solve this week's tasks.
 
 #### ``create_histograms.py``
