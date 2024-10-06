@@ -10,7 +10,8 @@
 
 [📂 Files in this project](#files-in-this-project)
 
-## ▶️ Code execution
+<h2 id="code-execution">▶️ Code execution</h2>
+
 ### Clone the repository
 ```
 git clone https://github.com/MCV-2024-C1-Project/Team7
@@ -47,7 +48,7 @@ python main.py \
 --results-file results/result.pkl
 ```
 
-## 💡 This week's task
+<h2 id="this-weeks-task">💡 This week's task</h2>
 The goal of this week's task is to match pictures of paintings from a large image database with other image queries that feature those artworks. The resemblance between each query and each image in the database is assessed based on their visual content; specifically, the similarity between their color histograms.
 
 ### Task 1
@@ -104,7 +105,7 @@ In task three, the similarity between the queries and all the images in the data
 ### Task 4
 The creation of the submition for the blind competition is done in the ``main.py`` file. It generates a ``pkl`` file that contains a list of lists, where each of them corresponds to a query, and the inner values represent the indices of the predicted images for that query (sorted from most to least confident). Remember to execute the file ``create_histograms.py`` once before running ``main.py``.
 
-## 📂 Files in this project
+<h2 id="files-in-this-project">📂 Files in this project</h2>
 Here you can find a bief description of the files that we created to solve this week's tasks.
 
 #### ``create_histograms.py``
