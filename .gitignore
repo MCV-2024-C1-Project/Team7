@@ -2,7 +2,7 @@
 data/
 data/BBDD/
 data/qsd1_w1/
-prov_results/
+results/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
