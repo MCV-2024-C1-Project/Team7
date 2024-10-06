@@ -44,7 +44,7 @@ python main.py \
 --color-space LAB \
 --similarity-measure Correlation \
 --k-val 10 \
---results-file result.pkl
+--results-file results/result.pkl
 ```
 
 ## 💡 This week's task
