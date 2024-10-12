@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 import numpy as np
 import itertools
+from src.utils.images import split_image_into_quadrants
 
 def create_histo_dir(base_dir, color_space, dataset):
     # Create directory for the specific color space to save histograms 
@@ -13,23 +14,6 @@ def create_histo_dir(base_dir, color_space, dataset):
     histogram_dir = os.path.join(base_dir, dataset, color_space)
     os.makedirs(histogram_dir, exist_ok=True)
     return histogram_dir
-
-def load_images_from_directory(directory):
-    images = []
-    # List all files in the directory
-    for filename in os.listdir(directory):
-        # Filter only image files based on file extensions
-        if filename.endswith(('.jpg')):
-            # Full path to the image file
-            img_path = os.path.join(directory, filename)
-            # Read the image using OpenCV
-            img = cv2.imread(img_path)
-            # Check if the image was loaded successfully
-            if img is not None:
-                images.append(img)
-            else:
-                print(f"Failed to load image: {img_path}")
-    return images
 
 def change_color_space(image, color_space):
     # Change the color space of an image 
@@ -187,6 +171,49 @@ def compare_histograms(histograms1, histograms2, distance='intersection', normal
 
     return average_distance
 
+def get_pyramid_histograms(image, dimension, bins, levels, adaptive_bins=False):
+    """
+    Computes histograms for image quadrants at specified levels, with optional adaptive bins.
+
+    Parameters:
+    -----------
+    image : ndarray
+        The input image.
+    dimension : int
+        The dimension of the histograms.
+    bins : int
+        Number of bins to use for the histograms.
+    levels : list of int
+        The levels at which to split the image into quadrants.
+    adaptive_bins : bool, optional
+        If True, adjusts bins per level: bins = bins / 2^(level - 1)
+
+    Returns:
+    --------
+    histograms : list of ndarray
+        The list of histograms from all quadrants at specified levels.
+    """
+    histograms = []
+
+    for level in levels:
+        # Get quadrants for the current level
+        level_quadrants = split_image_into_quadrants(image, level)
+        
+        # Adjust bins if adaptive_bins is True
+        if adaptive_bins:
+            level_bins = bins // (2 ** (level - 1))
+            level_bins = max(level_bins, 1)  # Ensure at least 1 bin
+        else:
+            level_bins = bins
+
+        # Compute histograms for each quadrant
+        for quadrant in level_quadrants:
+            quadrant_histograms = get_histograms(
+                quadrant, dimension=dimension, bins=level_bins
+            )
+            histograms.extend(quadrant_histograms)
+
+    return histograms
 
 def plot_histograms(histograms, color_space, filename):
     #Visualize histograms, if more than one channel, all visible in the same plot
@@ -210,6 +237,77 @@ def plot_histograms(histograms, color_space, filename):
     plt.legend()
     plt.grid(True)
     plt.show()
+
+def plot_all_histograms(histograms):
+    """
+    Plots a list of histograms, automatically choosing the appropriate representation
+    based on their dimensionality.
+
+    Parameters:
+    - histograms: List of histograms (numpy arrays) returned by get_histograms.
+    """
+    for idx, hist in enumerate(histograms):
+        # Adjust for OpenCV histograms which might have an extra dimension
+        if hist.ndim == 2 and 1 in hist.shape:
+            # Flatten the histogram to 1D
+            hist = hist.flatten()
+            dim = 1
+        else:
+            dim = hist.ndim
+
+        # 1D Histogram
+        if dim == 1:
+            plt.figure()
+            plt.title(f'1D Histogram {idx + 1}')
+            plt.xlabel('Bins')
+            plt.ylabel('Frequency')
+            plt.plot(hist)
+            plt.grid(True)
+            plt.show()
+        
+        # 2D Histogram
+        elif dim == 2:
+            plt.figure()
+            plt.title(f'2D Histogram {idx + 1}')
+            plt.xlabel('Channel 1 Bins')
+            plt.ylabel('Channel 2 Bins')
+            plt.imshow(hist, interpolation='nearest', origin='lower', aspect='auto')
+            plt.colorbar(label='Frequency')
+            plt.show()
+        
+        # 3D Histogram
+        elif dim == 3:
+            # Prepare the grid of bin centers
+            x_bins = np.arange(hist.shape[0])
+            y_bins = np.arange(hist.shape[1])
+            z_bins = np.arange(hist.shape[2])
+            x_mesh, y_mesh, z_mesh = np.meshgrid(x_bins, y_bins, z_bins, indexing='ij')
+            
+            # Flatten the arrays for plotting
+            x = x_mesh.ravel()
+            y = y_mesh.ravel()
+            z = z_mesh.ravel()
+            values = hist.ravel()
+            
+            # Filter out zero frequencies for better visualization
+            nonzero = values > 0
+            x = x[nonzero]
+            y = y[nonzero]
+            z = z[nonzero]
+            values = values[nonzero]
+            
+            fig = plt.figure()
+            ax = fig.add_subplot(111, projection='3d')
+            sc = ax.scatter(x, y, z, c=values, cmap='viridis', marker='o')
+            plt.title(f'3D Histogram {idx + 1}')
+            ax.set_xlabel('Channel 1 Bins')
+            ax.set_ylabel('Channel 2 Bins')
+            ax.set_zlabel('Channel 3 Bins')
+            plt.colorbar(sc, label='Frequency')
+            plt.show()
+        
+        else:
+            print(f"Histogram {idx + 1} has unsupported dimension: {dim}")
 
 def save_histograms(histograms, filename, output_dir):
     # Save histograms in the corresponding directory, using pickle
