@@ -5,7 +5,8 @@ import pandas as pd
 import argparse
 
 from src.utils.distance_matrix import create_distance_matrix, generate_results
-from src.utils.histograms import load_images_from_directory, change_color_space, get_histograms
+from src.utils.histograms import change_color_space, get_histograms
+from src.utils.images import load_images_from_directory
 from src.utils.ml_metrics import mapk
 
 def parse_args():
