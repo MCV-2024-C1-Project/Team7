@@ -145,6 +145,30 @@ def score_pixel_masks(result_masks, test_masks):
         
     return pixelPrecision, pixelSensitivity, pixelF1      
 
+def score_pixel_mask_list(result_mask, test_mask):
+    pixelTP  = 0
+    pixelFN  = 0
+    pixelFP  = 0
+    pixelTN  = 0
+    for result,gt in zip(result_mask, test_mask):
+
+        if len(result.shape) == 3:
+            result = result[:,:,0]
+        
+        if len(gt.shape) == 3:
+            gt = gt[:,:,0]
+
+        [localPixelTP, localPixelFP, localPixelFN, localPixelTN] = evalf.performance_accumulation_pixel(result, gt)
+        pixelTP = pixelTP + localPixelTP
+        pixelFP = pixelFP + localPixelFP
+        pixelFN = pixelFN + localPixelFN
+        pixelTN = pixelTN + localPixelTN
+    [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity] = evalf.performance_evaluation_pixel(pixelTP, pixelFP, pixelFN, pixelTN)
+    pixelF1 = 0
+    if (pixelPrecision + pixelSensitivity) != 0:
+        pixelF1 = 2*((pixelPrecision*pixelSensitivity)/(pixelPrecision + pixelSensitivity))
+        
+    return [pixelPrecision, pixelSensitivity, pixelF1]   
     
 def create_mask (ima_dir, ima_name, box):
     base, ext = os.path.splitext(ima_name)
