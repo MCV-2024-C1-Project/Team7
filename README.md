@@ -7,8 +7,6 @@
 - [Task 2](#task-2)
 - [Task 3](#task-3)
 - [Task 4](#task-4)
-- [Task 5](#task-5)
-- [Task 6](#task-6)
 
 [📂 Files in this project](#files-in-this-project)
 
@@ -141,18 +139,30 @@ And Although combining 2D histograms with pyramids seemed promising initially, i
 Additionally, we discovered that the Bhattacharyya Metric Yields Even Better Results after fixing a bug in Week 1. Upon recomputing the metrics, we found that using Bhattacharyya distance improved MAP@1 to 0.933 for CIELAB, 1D histograms, pyramid level 5, and 64 bins (non-adaptive). This suggests that Bhattacharyya distance is a more suitable similarity measure for this task compared to correlation.
 
 ### Task 3
+The goal of the third task is to remove the background from each image. In order to do so, the task has been solved as a binary segmentation problem, where the foreground to segment is the painting that appears in each of the images. Several strategies have been studied.
 
-#### Adaptative Thresholding
-
+#### Adaptive Thresholding
+Determines the threshold for a pixel based on a small region arround it. For this method we tried two different aproaches:
+- **Mean**: the pixels arround are all equally weighted.
+- **Gausian**: the pixels arround weight is assigned based on a Gaussian distribution.
 #### Otsu's Thresholding
+Selects the optimal threshold that minimizes the within-class variance, which is defined as:
+$$\omega^{2} = q_1(t)\sigma_1^2(t)+q_2(t)\sigma_2^2(t)$$
+Where $q_1(t)$ and $q_2(t)$ are the class probabilities and $\sigma_1^2(t)$ and $\sigma_2^2(t)$ are the variances of the two classes separated by the threshold t.
+
+We also tried to intruduce a **bias factor** to push the background's mean and standard deviation to be as close as possible to the ones extracted from the images borders.
 
 #### Mean shift
+Creates clusters based on the density, in this case we use the value of each pixel so it generates clusters based on the colors. In this case makes possible detecting the background based on the color it has. 
+
+For further improvement of this method after de mean shift we also applied otsu's and binary thresholding.
 
 #### Post-processing
+After all these techniques we identified that even most of the edges are segmented the inside of the painting is considered background and, thus, not filled. So we tried two different post-processing strategies to solve it.
 
-- Closing + Convex Hull
+- Erosion + Convex Hull Filling: after eroding the edges we generate a convex hull arround those and fill it as the inside of the convex hull should contain the painting.
 
-- Closing + Largest Contour Filling
+- Closing + Largest Contour Filling: after appling a clossing to the obtained mask to assure a better painting coverage in the mask we then apply the largest countour filling wich finds the painting shape and fills it.
 
 ### Task 4
 The choosen method for the final results and therefore the metrics for task 4 has been a combination of Mean Adaptative Threshold (MAT), Closing and Largest Contour Filling (LCF). This combination gave us the values on the next table:
@@ -160,10 +170,6 @@ The choosen method for the final results and therefore the metrics for task 4 ha
 | Method | Precision | Recall  | F1 |
 |:-----|:------------|:------------| :------------|
 | MAT + Closing + LCF   | **0.96**      | **0.99** | **0.98** |
-
-### Task 5
-
-### Task 6
 
 <h2 id="files-in-this-project">📂 Files in this project</h2>
 Here you can find a bief description of the most relevant files and functions that we created to solve this week's tasks. They will be divided into two sections, corresponding to the main two tasks of this week.
@@ -188,5 +194,8 @@ This function generates pyramid histograms for an image, returning a list of his
 
 ### Files related to background detection and removal
 
-#### ``file.py``
-Explanation
+#### ``segmentation_analysis.ipynb``
+This notebook contains the experiments computed to test the different proposed segmentation methods. It includes:
+- The generation of the histograms of the images' border pixels
+- Advanced thresholding techniques
+- Post-processing techniques
