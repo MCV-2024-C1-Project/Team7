@@ -1,4 +1,4 @@
-# Master Computer Vision, Module C1
+# Master in Computer Vision, Module C1
 # Week 2
 [▶️ Code execution](#code-execution)
 
@@ -51,6 +51,21 @@ The arguments shown in the previous command line are the ones by default, which 
 This week's goal is two fold. On one hand, we are asked to explore more advanced descriptors for the images: 2D/3D histograms and pyramid histograms. On the other hand, we must develop a color-based system to detect and remove the background of uncropped painting images. We then must evaluate both tasks separately and in combination. As in the previous week, the overall, overarching goal is to match pictures of paintings from a large image database with other image queries that feature those artworks.
 
 ### Task 1
+In task one we had to explore the potential of 2D/3D histograms, pyramid histograms and, possibly, a combination of the two. There are many different way to analyise all the possible combination of these methods. For this reason, we first asked ourselved several questions of interest:
+
+**Regarding 2D/3D histograms**
+- Do 2D histograms improve results with respect to 1D histograms?
+- Do 3D histograms improve results with respect to 1D histograms?
+- Which ones perform better, 2D or 3D histograms?
+- What is the best combinations of number of bins and histogram dimensionality (all other parameters fixed)?
+
+**Regarding pyramid histograms**
+- Do pyramidal histograms improve results?
+- What is a good combination of pyramid levels? Does stacking them work?
+- Does the number of bins affect pyramid histograms?
+
+To efficiently answer these questions, we subsequently divided our study in two parts, corresponding to the separate analysis of 2D/3D histograms and pyramid histograms.
+
 
 ### Task 2
 
@@ -63,7 +78,14 @@ This week's goal is two fold. On one hand, we are asked to explore more advanced
 ### Task 6
 
 <h2 id="files-in-this-project">📂 Files in this project</h2>
-Here you can find a bief description of the most relevant files and functions that we created to solve this week's tasks.
+Here you can find a bief description of the most relevant files and functions that we created to solve this week's tasks. They will be divided into two sections, corresponding to the main two tasks of this week.
+
+### Files related to advanced histogram features
+
+#### ``file.py``
+Explanation
+
+### Files related to background detection and removal
 
 #### ``file.py``
 Explanation
