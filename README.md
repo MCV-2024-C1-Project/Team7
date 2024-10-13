@@ -125,8 +125,8 @@ As can be seen in the results of [Task 1](#task-1), the best descriptor of this 
 The following table summarizes the comparison:
 | Week | Color Space | Similarity  | Pyramid Level | Hist. Dim. | Bins | Normalization | **MAP@1** | **MAP@5** |
 |:-----|:------------|:------------|:--------------|:-----------|:-----|:--------------|----------:|----------:|
-| 1    | CIELAB      | Correlation | [1]           | 256        | None | None          |     **0.300** |     **0.333** |
-| 2    | CIELAB      | Correlation | [5]           | 128        | None | None          |     **0.900** |     **0.908** |
+| 1    | CIELAB      | Correlation | [1]           | 1          | 256  | None          |     **0.300** |     **0.333** |
+| 2    | CIELAB      | Correlation | [5]           | 1          | 128  | None          |     **0.900** |     **0.908** |
 
 As can be seen, there has been a **3-fold increase in performance** thanks to adding a pyramid level 5 and reducing the number of bins.
 
