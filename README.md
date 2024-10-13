@@ -66,6 +66,56 @@ In task one we had to explore the potential of 2D/3D histograms, pyramid histogr
 
 To efficiently answer these questions, we subsequently divided our study in two parts, corresponding to the separate analysis of 2D/3D histograms and pyramid histograms.
 
+The results of the first part can be entirely reproduced executing the following script:
+```
+python test_2D_3D_histograms.py \
+--queries-dir "./data/qsd1_w2/" \
+--bbdd-dir "./data/BBDD/" \
+--color-space "LAB" \
+--similarity-measure "correlation" \
+--normalize "None"
+```
+
+Given a query dataset and the database dataset, this script explores different combinations of histogram bins and histogram dimensions and calculates MAP@1 and MAP@5 for each one. In particular, it tests all combinations resulting from 256, 128, 64, 32 and 16 bins, and 1, 2, and 3 dimensional histograms. The parameters for color space, similarity measure and normalization have been fixed to match those of last week's Method 1, so the results can be compared. To see the details of the implementation, please see [📂 Files in this project](#files-in-this-project).
+
+*Note: the combination of 256 bins and 3D histograms has not been tested due to the extremely high dimensionality (>16.7 million per descriptor).*
+
+The results obtained for MAP@1 are the following:
+
+| Histogram Dim \ Bins | 256   | 128   | 64    | 32    | 16    |
+|----------------------|-------|-------|-------|-------|-------|
+| 1                    | 0.333 | 0.367 | 0.400 | 0.300 | 0.367 |
+| 2                    | 0.300 | 0.300 | 0.367 | 0.333 | **0.400** |
+| 3                    |       | 0.267 | 0.300 | 0.300 | **0.400** |
+
+The results of the second part can be entirely reproduced executing the following script:
+```
+python test_pyramid_histograms.py \
+--queries-dir "./data/qsd1_w2/" \
+--bbdd-dir "./data/BBDD/" \
+--color-space "LAB" \
+--similarity-measure "correlation" \
+--histogram-dim 1 \
+--normalize "None"
+```
+
+Again, given a query dataset and the database dataset, this script explores different combinations of parameters and calculates MAP@1 and MAP@5. In this case, we are combining number of bins and pyramid levels. The number of bins tested have been 128, 64, 32, 16, and 128+Adaptive. The pyramid levels tested have been 1, 2, 3, 4, 5, [1, 2], [1, 2, 3], [1, 2, 3, 4] and [1, 2, 3, 4, 5]. Here, [x, y, x] means we are concatenating pyramid levels x, y and z, and Adaptive bins means that, for each level, bins are calculated dynamically according to an equation. In particular, for level L and initial bins B, we use B/2^(L-1) bins. For example, for level 4 using 128 initial bins, only 128/2^(4-1) = 128/8 = 16 bins would be used.
+
+The results obtained for MAP@1 are the following:
+
+| pyramid_level \ bins  |   (128, False) |   (64, False) |   (32, False) |   (16, False) |   (128, True) |
+|:----------------------|---------------:|--------------:|--------------:|--------------:|--------------:|
+| [1]                   |          0.367 |         0.400 |         0.300 |         0.367 |         0.367 |
+| [2]                   |          0.400 |         0.467 |         0.533 |         0.567 |         0.467 |
+| [3]                   |          0.633 |         0.667 |         0.700 |         0.667 |         0.700 |
+| [4]                   |          0.867 |         0.867 |         0.867 |         0.767 |         0.767 |
+| [5]                   |          **0.900** |         0.867 |         0.867 |         0.800 |         0.700 |
+| [1, 2]                |          0.400 |         0.433 |         0.500 |         0.500 |         0.433 |
+| [1, 2, 3]             |          0.600 |         0.633 |         0.667 |         0.600 |         0.667 |
+| [1, 2, 3, 4]          |          0.833 |         0.867 |         0.833 |         0.767 |         0.767 |
+| [1, 2, 3, 4, 5]       |          **0.900** |         0.867 |         0.867 |         0.767 |         0.700 |
+
+*Note: in the preivous table, True or False means whether the Adaptive bins method has been used or not.*
 
 ### Task 2
 
