@@ -42,10 +42,9 @@ python generate_submission_cropped.py \
 ```
 
 ```
-python crop_imaes.py \
---queries_dir "./data/qst1_w2/"
---output_masks_dir "./data/masks/qst1_w2/"
---output_cropped_dir "./data/cropped_imgs/qst1_w2/"
+python generate_submission_background.py \
+--queries-dir "./data/qst2_w2/" \
+--bbdd-dir "./data/BBDD/"
 ```
 
 The arguments shown in the previous command line are the ones by default, which incorporate the best parameter values according to our experiments. Use ``python main.py -h`` to see all the possible arguments.
