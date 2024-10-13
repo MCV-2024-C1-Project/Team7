@@ -133,6 +133,14 @@ The following table summarizes the comparison:
 
 As can be seen, there has been a **3-fold increase in performance** thanks to adding a pyramid level 5 and reducing the number of bins.
 
+- ``Higher Pyramid Levels Drive Significant Performance Improvements:`` Employing pyramid histograms with higher division levels resulted in a notable boost in performance. The finer spatial divisions allow the histograms to capture more intricate details within the images, leading to much better matching accuracy.
+
+- ``1D Histograms Outperform 2D and 3D Variants:`` Despite experimenting with 2D and 3D histograms, the results show that 1D histograms, when combined with pyramid levels, deliver the best performance. Among the tested configurations, 1D histograms with 128 bins and pyramid level 5 emerged as the most effective.
+
+And Although combining 2D histograms with pyramids seemed promising initially, it proved ineffective. The results were consistently worse than the 1D histogram-pyramid combination, with MAP@1 scores on average 5.8% lower.
+
+Additionally, we discovered that the Bhattacharyya Metric Yields Even Better Results after fixing a bug in Week 1. Upon recomputing the metrics, we found that using Bhattacharyya distance improved MAP@1 to 0.933 for CIELAB, 1D histograms, pyramid level 5, and 64 bins (non-adaptive). This suggests that Bhattacharyya distance is a more suitable similarity measure for this task compared to correlation.
+
 ### Task 3
 
 #### Adaptative Thresholding
@@ -163,8 +171,21 @@ Here you can find a bief description of the most relevant files and functions th
 
 ### Files related to advanced histogram features
 
-#### ``file.py``
-Explanation
+#### ``histograms.py``
+- **get_histograms()**
+This function works similarly to the one we had before but with two additional arguments: dimension and bins. Its role is to generate histograms for a given image, which can be 1D, 2D, or 3D depending on the specified parameters.
+- For 1D histograms, it functions as before, but now allows the number of bins to be modified.
+- For 2D and 3D histograms, it computes histograms for all possible combinations between the color space dimensions of the image. For example, with dimension=2 and an image in RGB, it will calculate 3 histograms: [R, G], [R, B], and [G, B].
+
+- **plot_all_histograms()**
+This function allows us to plot all the histograms returned by get_histograms(). It can automatically detect and visualize the histograms, regardless of their dimension or how many histograms there are.
+
+- **compare_histograms()**
+This function generalizes OpenCV’s compareHist(). It takes in two lists of histograms, the output from get_histograms() for two different images, and computes the global distance between them. It calculates the distance between each pair of histograms and then averages the results. Additionally, the function allows you to specify the type of distance to use and includes an option to normalize the histograms (True/False). This function should be called within create_distance_matrix() to replace the default OpenCV compareHist() method.
+
+- **get_pyramid_histograms()**
+This function generates pyramid histograms for an image, returning a list of histograms for all sub-images across different pyramid levels. It takes several arguments: the image, the histogram dimension, the number of bins, and a list of levels (e.g., [1, 2, 3]). For instance, with dimension=2, bins=64, and levels=[1, 2, 3], the function will return a list containing 1 + 4 + 16 (i.e., 21) 2D histograms, each with 64x64 bins.
+- There’s also an optional adaptive_bins() argument, which reduces the number of bins as the pyramid levels increase. For example, with bins=256 and levels=[1, 2, 3], level 1 will have 256 bins, level 2 will have 256/2 bins, and level 3 will have 256/4 bins. This helps manage bin sizes across different pyramid levels.
 
 ### Files related to background detection and removal
 
