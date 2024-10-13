@@ -33,15 +33,16 @@ pip install -r requirements.txt
 Even though different locations can be specified, in general the scripts assume a specific structure. To make sure everything works as expected, please create a file named ``data`` at the top level of the repository. Then, place the datasets ``BBDD``, ``qsd1_w2``, ``qsd2_w2``, ``qst1_w2`` and ``qst2_w2`` inside the folder ``data``.
 
 ### Run the main code
-The are two main files that can be run to generate the 2 sumbissions for this week: ``generate_sumbission_background.py``, for the images with background, and ``generate_sumbission_cropped.py`` for the images without background. They can be exectued as follows:
+The are two main files that can be run to generate the 2 sumbissions for this week: ``generate_sumbission_cropped.py``, for the images without background, and ``generate_sumbission_background.py`` for the images with background. They are already configured with the best parameters found during our experiments, so the only arguments that need to be specified are the folders with the query and DB images. They can be exectued as follows:
+
+```
+python generate_submission_cropped.py \
+--queries-dir "./data/qst1_w2/" \
+--bbdd-dir "./data/BBDD/"
+```
 
 ```
 python generate_sumbission_background.py \
-TO DO
-```
-
-```
-python generate_sumbission_cropped.py \
 TO DO
 ```
 
