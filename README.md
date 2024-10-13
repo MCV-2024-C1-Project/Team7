@@ -42,8 +42,10 @@ python generate_submission_cropped.py \
 ```
 
 ```
-python generate_sumbission_background.py \
-TO DO
+python crop_imaes.py \
+--queries_dir "./data/qst1_w2/"
+--output_masks_dir "./data/masks/qst1_w2/"
+--output_cropped_dir "./data/cropped_imgs/qst1_w2/"
 ```
 
 The arguments shown in the previous command line are the ones by default, which incorporate the best parameter values according to our experiments. Use ``python main.py -h`` to see all the possible arguments.
@@ -133,7 +135,24 @@ As can be seen, there has been a **3-fold increase in performance** thanks to ad
 
 ### Task 3
 
+#### Adaptative Thresholding
+
+#### Otsu's Thresholding
+
+#### Mean shift
+
+#### Post-processing
+
+- Closing + Convex Hull
+
+- Closing + Largest Contour Filling
+
 ### Task 4
+The choosen method for the final results and therefore the metrics for task 4 has been a combination of Mean Adaptative Threshold (MAT), Closing and Largest Contour Filling (LCF). This combination gave us the values on the next table:
+
+| Method | Precision | Recall  | F1 |
+|:-----|:------------|:------------| :------------|
+| MAT + Closing + LCF   | **0.96**      | **0.99** | **0.98** |
 
 ### Task 5
 
