@@ -99,11 +99,11 @@ python test_pyramid_histograms.py \
 --normalize "None"
 ```
 
-Again, given a query dataset and the database dataset, this script explores different combinations of parameters and calculates MAP@1 and MAP@5. In this case, we are combining number of bins and pyramid levels. The number of bins tested have been 128, 64, 32, 16, and 128+Adaptive. The pyramid levels tested have been 1, 2, 3, 4, 5, [1, 2], [1, 2, 3], [1, 2, 3, 4] and [1, 2, 3, 4, 5]. Here, [x, y, x] means we are concatenating pyramid levels x, y and z, and Adaptive bins means that, for each level, bins are calculated dynamically according to an equation. In particular, for level L and initial bins B, we use B/2^(L-1) bins. For example, for level 4 using 128 initial bins, only 128/2^(4-1) = 128/8 = 16 bins would be used.
+Again, given a query dataset and the database dataset, this script explores different combinations of parameters and calculates MAP@1 and MAP@5. In this case, we are combining number of bins and pyramid levels. The number of bins tested have been 128, 64, 32, 16, and 128+Adaptive. The pyramid levels tested have been 1, 2, 3, 4, 5, [1, 2], [1, 2, 3], [1, 2, 3, 4] and [1, 2, 3, 4, 5]. Here, [x, y, x] means we are concatenating pyramid levels x, y and z, and Adaptive bins means that, for each level, bins are calculated dynamically according to an equation. In particular, for level L and initial bins B, we use B/2^(L-1) bins. For example, for level 4 using 128 initial bins, only 128/2^(4-1) = 128/8 = 16 bins would be used. To see more details of the implementation, please see [📂 Files in this project]
 
 The results obtained for MAP@1 are the following:
 
-| pyramid_level \ bins  |   (128, False) |   (64, False) |   (32, False) |   (16, False) |   (128, True) |
+| Pyramid Level \ Bins  |   (128, False) |   (64, False) |   (32, False) |   (16, False) |   (128, True) |
 |:----------------------|---------------:|--------------:|--------------:|--------------:|--------------:|
 | [1]                   |          0.367 |         0.400 |         0.300 |         0.367 |         0.367 |
 | [2]                   |          0.400 |         0.467 |         0.533 |         0.567 |         0.467 |
@@ -118,6 +118,17 @@ The results obtained for MAP@1 are the following:
 *Note: in the preivous table, True or False means whether the Adaptive bins method has been used or not.*
 
 ### Task 2
+In task two we must compare the results of this week with last week, using the best descriptors from each.
+
+As can be seen in the results of [Task 1](#task-1), the best descriptor of this week achieves a much higher MAP@1.
+
+The following table summarizes the comparison:
+| Week | Color Space | Similarity  | Pyramid Level | Hist. Dim. | Bins | Normalization | **MAP@1** | **MAP@5** |
+|:-----|:------------|:------------|:--------------|:-----------|:-----|:--------------|----------:|----------:|
+| 1    | CIELAB      | Correlation | [1]           | 256        | None | None          |     **0.300** |     **0.333** |
+| 2    | CIELAB      | Correlation | [5]           | 128        | None | None          |     **0.900** |     **0.908** |
+
+As can be seen, there has been a **3-fold increase in performance** thanks to adding a pyramid level 5 and reducing the number of bins.
 
 ### Task 3
 
