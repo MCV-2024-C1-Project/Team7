@@ -194,6 +194,15 @@ This function generates pyramid histograms for an image, returning a list of his
 
 ### Files related to background detection and removal
 
+#### ``crop_images.py``
+This file crops the query images according to the segmentation strategy. It outputs both the images' masks and the cropped images. Its usage is the following:
+```
+python crop_images.py \
+--images-dir "./data/qsd1_w2/" \
+--output-masks-dir "./data/qsd1_w2_masks/" \
+--output-cropped-dir "./data/qsd1_w2_cropped/"
+```
+
 #### ``segmentation_analysis.ipynb``
 This notebook contains the experiments computed to test the different proposed segmentation methods. It includes:
 - The generation of the histograms of the images' border pixels
