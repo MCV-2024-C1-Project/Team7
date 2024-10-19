@@ -1,6 +1,7 @@
 import numpy as np
 import pickle
 from src.utils.histograms import compare_histograms
+from src.utils.vectors import compare_vectors
 
 def create_distance_matrix(query_hists, bbdd_hists, method, normalize='minmax'):
     """
@@ -44,6 +45,40 @@ def create_distance_matrix(query_hists, bbdd_hists, method, normalize='minmax'):
 
     return similarity_matrix
 
+def create_distance_matrix_vectors(query_vectors, bbdd_vectors, method):
+    """
+    Computes the similarity between a list of query vectors and a list 
+    of database vectors. To compute the similarity it uses a function
+    specialized to vectors, instead of histograms or other structures.
+
+    Parameters
+    ----------
+    query_hists : list
+        List of all the query vectors.
+    bbdd_hists : list
+        List that contains the vectors of the DB.
+    method : str
+        Specifies which similarity method to use.
+        Methods available:
+        - "L1" for Manhattan distance (city block distance)
+        - "L2" for Euclidean distance
+        - "Cosine" for Cosine similarity
+        - "Pearson" for Pearson correlation
+
+    Returns
+    -------
+    similarity_matrix: ndarray
+        Matrix with all the similarity values.
+    """
+    # A row for each query and a column for each element in the DB to search
+    similarity_matrix = np.zeros((len(query_vectors), len(bbdd_vectors)))
+
+    for ii, query in enumerate(query_vectors):
+        for jj, bd in enumerate(bbdd_vectors):
+            similarity_matrix[ii][jj] = compare_vectors(query, bd, method)
+
+    return similarity_matrix
+
 def generate_results(similarity_matrix, distance_measure):
     """
     Generates a matrix that contains the indexes of each image sorted by score
@@ -63,6 +98,10 @@ def generate_results(similarity_matrix, distance_measure):
         'bhattacharyya': cv2.HISTCMP_BHATTACHARYYA,
         'hellinger': cv2.HISTCMP_HELLINGER,
         'kl-divergence': cv2.HISTCMP_KL_DIV
+        - "L1" for Manhattan distance (city block distance) (for vectors)
+        - "L2" for Euclidean distance (for vectors)
+        - "Cosine" for Cosine similarity (for vectors)
+        'Pearson': Parson correlation (for vectors)
     
     Returns
     -------
@@ -70,7 +109,7 @@ def generate_results(similarity_matrix, distance_measure):
         A list containing sorted lists of indexes by score of the similarity matrix.
     """
     result = []
-    if distance_measure in ["correlation", "intersection"]:
+    if distance_measure in ["correlation", "intersection", "Pearson"]:
         for row in similarity_matrix:
             result.append(np.argsort(row)[::-1])
     else:
