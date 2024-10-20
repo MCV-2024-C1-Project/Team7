@@ -89,3 +89,64 @@ def plot_quadrants(quadrants, save=False):
         plt.savefig("quadrants.jpg")
     plt.tight_layout()
     plt.show()
+
+def load_and_preprocess_images(folder, extension=".jpg"):
+    images = []
+    for filename in os.listdir(folder):
+        if filename.endswith((extension)):
+            image_path = os.path.join(folder, filename)
+            # Read image
+            image = cv2.imread(image_path)
+            # Check if the image was loaded successfully
+            if image is not None:
+                image = preprocess_image(image, image_size=(256, 256))
+                images.append(image)
+            else:
+                print(f"Failed to load image: {image_path}")
+    return images
+
+def preprocess_image(image, image_size=(256, 256)):
+    # Resize image
+    image = cv2.resize(image, image_size)
+    
+    return image
+    
+def transform_images_color_space(images, color_space="gray"):
+    """
+    Transforms the color space of the given images.
+
+    Args:
+    - images (list): List of loaded images (in BGR format).
+    - color_space (str): The target color space.
+                        "gray" - Grayscale,
+                        "L"    - L channel of CIELAB,
+                        "V"    - V channel of HSV.
+    
+    Returns:
+    - transformed_images (list): List of processed images in the target color space.
+    """
+
+    transformed_images = []
+
+    for img in images:
+        if color_space == "gray":
+            # Convert the image to grayscale
+            gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            transformed_images.append(gray_img)
+
+        elif color_space == "L":
+            # Convert the image to CIELAB and extract the L channel
+            lab_img = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+            L_channel = lab_img[:, :, 0]  # Extract the L channel
+            transformed_images.append(L_channel)
+
+        elif color_space == "V":
+            # Convert the image to HSV and extract the V channel
+            hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+            V_channel = hsv_img[:, :, 2]  # Extract the V channel
+            transformed_images.append(V_channel)
+
+        else:
+            raise ValueError("Invalid color_space argument. Choose 'gray', 'L', or 'V'.")
+
+    return transformed_images
