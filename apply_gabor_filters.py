@@ -3,7 +3,7 @@ import cv2
 import argparse
 import os
 import pandas as pd
-
+from tqdm import tqdm
 
 from src.utils.images import load_images_from_directory
 
@@ -29,11 +29,14 @@ def apply_gabor_filter(img, filters):
 
     return newimage
 
-def gabor_features(filtered_img):
+def gabor_features(filtered_img, index, num_filters):
     """
     Returns the energy, the mean and the variance of a gabor filtered image
     """
     features = {}
+
+    features['index'] = index
+    features['num_filters'] = num_filters
 
     energy = np.sum(filtered_img**2)
     features["energy"] = energy
@@ -62,20 +65,22 @@ def parse_args():
 def main():
     args = parse_args()
     images = load_images_from_directory(args.objective_directory)
-    orientations = [0, 45, 90, 135]
-    gabor_information = {}
+    num_orientations = [2**n for n in range(6)]
+    gabor_information = []
 
-    gabor_filters = create_gabor_filters(args.kernel_size, orientations)
-    
-    for i, image in enumerate(images):
-        filtered_img = apply_gabor_filter(image, gabor_filters)
-        features = gabor_features(filtered_img)
-        gabor_information[i] = features
-    
-    df = pd.DataFrame.from_dict(gabor_information).T
-
+    for num_filters in num_orientations:
+        orientations = np.arange(0, np.pi, np.pi/num_filters)
+        gabor_filters = create_gabor_filters(args.kernel_size, orientations)
+        print("Now computing garbor with ",str(num_filters),"filters")
+        for i, image in enumerate(tqdm(images)):
+            filtered_img = apply_gabor_filter(image, gabor_filters)
+            features = gabor_features(filtered_img, i, num_filters)
+            gabor_information.append(features)
+        
+    df = pd.DataFrame.from_dict(gabor_information)
     save_path = os.path.join(args.objective_directory,"garbor_features.csv")
     df.to_csv(save_path)
+    print(df)
 
 if __name__ == "__main__":
     main()
