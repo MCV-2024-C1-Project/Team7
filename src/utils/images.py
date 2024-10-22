@@ -33,7 +33,7 @@ def split_image_into_quadrants(image, level):
     """
     if level == 1:
         return [image]
-    height, width, _ = image.shape
+    height, width, *rest = image.shape
     center_x, center_y = width // 2, height // 2
 
     # Split image into quadrants
@@ -150,3 +150,9 @@ def transform_images_color_space(images, color_space="gray"):
             raise ValueError("Invalid color_space argument. Choose 'gray', 'L', or 'V'.")
 
     return transformed_images
+
+def rescale_images(images, image_size):
+    rescaled_images = []
+    for image in images:
+        rescaled_images.append(cv2.resize(image, image_size))
+    return rescaled_images
