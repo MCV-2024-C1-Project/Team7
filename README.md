@@ -101,9 +101,28 @@ Here you can find a bief description of the most relevant files and functions th
 
 ### Noise removal related files
 
+TO DO
+TO DO
+TO DO
+
+
 ### Texture extraction related files
+
+TO DO
+TO DO
+TO DO
+
 
 ### Painting detection and background removal related filed
 
+TO DO
+TO DO
+TO DO
+
+
 ### Full pipeline related files
+
+TO DO
+TO DO
+TO DO
 
