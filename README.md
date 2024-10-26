@@ -73,9 +73,76 @@ TO DO
 ### Task 2
 In Task 2, we must develop and test one or more methods to extract texture descriptors from the images. We should do the feature extraction using strictly texture descriptors only, and it is suggested we use LBP, DCT or wavelet-based methods for this purpose. 
 
+To adress this task, we have decided to study and test four different approaches: **LBP**, **DCT**, **Wavelets** and **Gabor filters**. For each of these approaches, using the clean QSD1_W3 dataset, we have studied different parameter combinations and preprocessing techniques. Then, we have analized the results and selected the best variant of each approach. At the end, we have also tested these variants with the noisy QSD1_W3 dataset, as well as with all the noise-filtered versions of this dataset, corresponding to the 5 denoising methods developed in Task 1. This way, we also have been able to assess how these approaches react to the presence of noise. Next, we explain in more detail each approach.
+
+#### DCT
+
+At the heart of this approach, the `dct()` function from **OpenCV** has been used. As additional preprocessing, we have considered changing the color space, splitting the image into different blocks, and rescaling to 256x256 for computational reasons as well as to simplify the process of splitting into blocks.
+
+A total of **360** different parameter combinations have been tested. They are the following:
+- **Color**: gray, L (from CIELAB), V (from HSV)
+- **Block size**: 256x256, 128x128, 64x64, 32x32, 16x16, 8x8
+- **Number of relevant coefficients**: 64, 32, 16, 8, 4
+- **Distance measure**: Cosine similarity, Pearson correlation, L1, L2
+
+Next are the highlights after analyzing the results:
+- The V color channel performs better on average than the other color channels.
+- The Cosine/Pearson distances perform significantly better on average than L1 and L2
+- Very high or very log dimensional feature vectors perform bad on average.
+- Out of the 360 different combinations, 30 of them have perfect scores (MAP@1 and MAP@5 both equal to 1).
+- The best variant corresponds to: *using V channel, Cosine distance, block size of 64, 64 relevant coefficients* (see DCT results analysis for more information on this decision).
+
+#### LBP
+
+The core of this approach is the `local_binary_pattern()` function from Scikit-image. Just like in the DCT approach, we have changed the color, splitted the image into different blocks and resized the image (in this case, because LBP is strongly dependent on resolution).
+
+A total of **324** different parameter combinations have been tested. They are the following:
+- **Color**: gray, L , V
+- **Number of blocks**: 64, 16, 4, 1
+- **(Radius, Points)**: (1, 8), (2, 10), (3, 12)
+- **Calculation method**: "default", "ror", "uniform"
+- **Distance measure**: Bhattacharyya, Correlation, Intersection
+The multi-resolution LBP approach has also been tested (concatinating all three combinations of raidus/points pairs), but the results are similar to the best results found with the single-resolution approach, although higher dimensional.
+
+Next are the highlights after analyzing the results:
+- The L color channel performs better on average, although not by much.
+- The more blocks that are used, the better the results (on average).
+- The defualt calculation method is much better. We believe this is because the "ror" method (roation invariant) produces sparse vectors (as processed with our functions), and thus distances cannot be properly calculated with them. On the other hand, the uniform method has been designed to be fast to compute, so the information is (in our case) too compressed (the feature vectors are low dimensional).
+- The best variant corresponds to: *using the L channel, Bhattacharyya distance, radius of 3 together with 12 neighboring points, and using the default calculation method* (see LBP results analysis for more information on this decision).
+
+#### Wavelets
+
 TO DO
 TO DO
 TO DO
+
+#### Gabor filters
+
+TO DO
+TO DO
+TO DO
+
+### Studying how the presence of noise affects performance
+
+To analyze how noise affects peformance, the best variants of all four methods have been tested not only with the clean QSD1_W3 dataset (which is the one used to perform the studies), but also with the noisy QSD1_W3 dataset, as well as with 5 different versions of denoised datasets (see Task 1 for more info on the denoising methods). The results are shown in the following table:
+
+| Method (best parameters) | MAP@1 No noise | MAP@1 Filtered noise (different methods) | MAP@1 Noise |
+|--------------------------|----------------|-------------------------------------------|-------------|
+|                          |                | M. 1 | M. 2 | M. 3 | M. 4 | M. 5       |             |
+| **DCT**                  | 1.000          | 1.000 | 1.000 | 1.000 | 1.000 | 0.933 | 1.000       | 1.000       |
+| *V, Cosine, 64 B. size, 64 Coeffs.* |   |   |   |   |   |   |   |
+| **LBP**                  | 1.000          | 0.833 | 0.900 | 0.933 | 0.433 | 0.933 | 0.900       |
+| *L, Bhatt., 3 rad, 12 p., def met., 16 b.* |   |   |   |   |   |   |
+| **Wavelets**             | 0.133          | 0.100 | 0.133 | 0.166 | 0.033 | 0.100 | 0.066       |
+| *dmey, Cosine*           |                |       |       |       |       |       |             |
+| **Gabor filters**        |                |       |       |       |       | 0.033 |             |
+| *1 filter, correlation*  |                |       |       |       |       |       |             |
+
+Analyzing the results, the following comments can be made:
+- aaa
+- aaa
+- aaa
+- aaa
 
 
 ### Task 3
