@@ -584,42 +584,64 @@ def create_denoised_dataset(noisy_dataset_path, denoised_dataset_path, method, l
 # MAIN FUNCTION
 # ===========================================================
 def generate_submission_qst2(query_dir, bbdd_dir):
+
+    # REMOVE NOISE FROM QUERY IMAGES FOR SEGMENTATION
+    # ========================================================
+
+    # Create a new directory for denoised images
+    denoised_for_segmentation_queries_dir = 'data/denoised_for_segmentation_queries_dir'
+
+    # Remove previous denoised images
+    if os.path.exists(denoised_for_segmentation_queries_dir):
+        shutil.rmtree(denoised_for_segmentation_queries_dir)
+
+    create_denoised_dataset(
+        noisy_dataset_path = query_dir,
+        denoised_dataset_path = denoised_for_segmentation_queries_dir,
+        method='gaussian',
+        lowpass_params={'ksize': 3},
+        highpass=False
+    )
     
+    # Read denoised images
+    rgb_queries_denoised = []
+    for filename in os.listdir(denoised_for_segmentation_queries_dir):
+        if filename.endswith('.jpg'):
+            img_path = os.path.join(denoised_for_segmentation_queries_dir, filename)
+            img_rgb = cv2.imread(img_path)
+            if img_rgb is not None:
+                rgb_queries_denoised.append(img_rgb)
+            else:
+                print(f"Warning: Failed to read {img_path}")
+
     # DETECT PAINTINGS IN QUERIES (SEGMENTATION)
     # ========================================================
 
     masks_queries_dir = "data/masks_queries_dir"
     cropped_queries_dir = "data/cropped_queries_dir"
 
-    # Remove previous paintings in temporary folder
+    # Remove previous masks and cropped images
     if os.path.exists(masks_queries_dir):
         shutil.rmtree(masks_queries_dir)
-
     if os.path.exists(cropped_queries_dir):
         shutil.rmtree(cropped_queries_dir)
 
-    # Create new temporary directory for denoised images
+    # Create new directories for masks and cropped images
     os.makedirs(masks_queries_dir, exist_ok=True)
     os.makedirs(cropped_queries_dir, exist_ok=True)
     
-    # Painting detection code/function HERE
-    # Denoise images
+    # Read query images
     rgb_queries = []
-    gray_queries = []
-
     for filename in os.listdir(query_dir):
         if filename.endswith('.jpg'):
             img_path = os.path.join(query_dir, filename)
             img_rgb = cv2.imread(img_path)
-
             if img_rgb is not None:
-                rgb_queries.append(img_rgb)
-                img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
-                gray_queries.append(img_gray)
+                rgb_queries_denoised.append(img_rgb)
             else:
                 print(f"Warning: Failed to read {img_path}")
 
-    masks = generate_masks(rgb_queries)
+    masks = generate_masks(rgb_queries_denoised)
 
     paintings_per_image = []
     image_counter = 0
@@ -633,8 +655,8 @@ def generate_submission_qst2(query_dir, bbdd_dir):
         # Detect connected components in the mask
         num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(mask, connectivity=8)
 
-        # Count frames (objects of interest) in the current image
-        frame_count = 0
+        # Count paintings (objects of interest) in the current image
+        painting_count = 0
 
         # Collect all valid components (ignoring background label 0)
         components = []
@@ -642,12 +664,10 @@ def generate_submission_qst2(query_dir, bbdd_dir):
         for j in range(1, num_labels):
             x, y, w, h, area = stats[j]
 
-            # Ignore very small components (noise)
-            if area > 100:  # Adjust the area threshold as needed
-                components.append((x, y, w, h, area))  # Store component details
+            components.append((x, y, w, h, area))  # Store component details
 
-        # Sort components from rightmost to leftmost (higher x to lower x)
-        components_sorted = sorted(components, key=lambda c: c[0], reverse=True)
+        # Sort components from leftmost to rightmost (higher x to lower x)
+        components_sorted = sorted(components, key=lambda c: c[0])
 
         # Iterate over sorted components and save them
         for (x, y, w, h, area) in components_sorted:
@@ -659,10 +679,10 @@ def generate_submission_qst2(query_dir, bbdd_dir):
 
             # Increment the counter for unique naming
             image_counter += 1
-            frame_count += 1
+            painting_count += 1
 
         # Add the number of paintings detected for this image to the list
-        paintings_per_image.append(frame_count)
+        paintings_per_image.append(painting_count)
 
     # Save the list of frame counts per image in a single .pkl file
     with open("data/paintings_per_image.pkl", "wb") as f:
@@ -751,7 +771,7 @@ def generate_submission_qst2(query_dir, bbdd_dir):
             submission.append([results_topK[i]])
             i += 1
         elif num_paintings == 2:
-            submission.append([results_topK[i+1], results_topK[i]])
+            submission.append([results_topK[i], results_topK[i+1]])
             i += 2
     
     # Save submission results
