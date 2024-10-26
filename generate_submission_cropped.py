@@ -325,7 +325,7 @@ def generate_submission_qst1(query_dir, bbdd_dir):
     
     denoised_paintings_folder = 'data/denoised_paintings'
 
-    # Remove previous paintings
+    # Remove previous paintings in temporary folder
     if os.path.exists(denoised_paintings_folder):
         shutil.rmtree(denoised_paintings_folder)
 
