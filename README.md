@@ -126,7 +126,7 @@ TO DO
 
 To analyze how noise affects peformance, the best variants of all four methods have been tested not only with the clean QSD1_W3 dataset (which is the one used to perform the studies), but also with the noisy QSD1_W3 dataset, as well as with 5 different versions of denoised datasets (see Task 1 for more info on the denoising methods). The results are shown in the following table:
 
-![results for the performance with and without noise](figs/noise_performance_table.jpg)
+![results for the performance with and without noise](figs/noise_performance_table.png)
 
 Analyzing the results, the following comments can be made:
 - aaa
