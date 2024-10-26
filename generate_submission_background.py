@@ -5,6 +5,7 @@ import cv2
 import os
 import pywt
 import shutil
+import tqdm as tqdm
 from skimage.measure import shannon_entropy
 from skimage.restoration import denoise_wavelet
 
@@ -28,8 +29,138 @@ def parse_args():
 
 # HELPER FUNCTIONS
 # ===========================================================
+
+def compute_edges(image, threshold1=100, threshold2=200):
+    """
+    Computes edges in an image using the Canny edge detection algorithm.
+
+    Args:
+        image (ndarray): Input image, can be grayscale or RGB.
+        threshold1 (int): First threshold for the hysteresis procedure.
+        threshold2 (int): Second threshold for the hysteresis procedure.
+
+    Returns:
+        ndarray: Binary image with edges detected.
+    """
+    # Convert to grayscale if necessary
+    if len(image.shape) == 3:
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    else:
+        gray = image
+    
+    # Apply Canny edge detection
+    edges = cv2.Canny(gray, threshold1, threshold2, apertureSize=3)
+    
+    return edges
+
+def morphological_transformations(edges):
+    """
+    Applies morphological transformations to close gaps in the edges.
+
+    Args:
+        edges (ndarray): Binary image with edges detected.
+
+    Returns:
+        ndarray: Binary image after morphological transformations.
+    """
+    # Perform morphological closing to fill gaps in the edges
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (27, 27))  # Use a kernel size of your choice
+    closed = cv2.dilate(edges, kernel, iterations=1)
+
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (17, 17))  # Use a kernel size of your choice
+    opened = cv2.erode(closed, kernel, iterations=1)
+
+    return opened
+
+def fill_with_convex_hull(edges):
+    """
+    Fills the detected edges with convex hulls of the largest contours.
+
+    Args:
+        edges (ndarray): Binary image with edges detected.
+
+    Returns:
+        tuple: A tuple containing:
+            - mask (ndarray): Binary mask with filled convex hulls.
+            - contours (list): List of contours found in the edges.
+    """
+    # Find contours of the closed image
+    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Take the two largest contours
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)[:2]
+
+    # Create an empty mask to draw filled convex hulls
+    mask = np.zeros_like(edges)
+
+    # Fill the convex hulls of the contours
+    for contour in contours:
+        if contour.size > 0:  # Ensure the contour is valid
+            convex_hull = cv2.convexHull(contour)
+            cv2.drawContours(mask, [convex_hull], -1, 255, thickness=cv2.FILLED)
+
+    return mask, contours
+
+def remove_small_segments(mask, min_area=2000):
+    """
+    Removes small segmented areas from a binary mask based on a minimum area threshold.
+    
+    Args:
+        mask (ndarray): Binary mask where segmented areas are white (255) and background is black (0).
+        min_area (int): Minimum area (in pixels) to keep. Components smaller than this will be removed.
+    
+    Returns:
+        ndarray: Cleaned binary mask with small components removed.
+    """
+    # Label connected components in the mask
+    num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(mask, connectivity=8)
+
+    # Create an empty mask to store the cleaned result
+    cleaned_mask = np.zeros(mask.shape, dtype=np.uint8)
+
+    # Iterate through each component and keep only those with area above the threshold
+    for i in range(1, num_labels):  # Skip label 0 as it is the background
+        area = stats[i, cv2.CC_STAT_AREA]
+        if area >= min_area:
+            # Retain the component in the cleaned mask
+            cleaned_mask[labels == i] = 255
+
+    return cleaned_mask
+
+def generate_masks(imgs_list):
+    """
+    Generate binary masks for a list of images.
+    The process involves computing edges, applying morphological transformations, 
+    filling with convex hull, and removing small segments.
+
+    Args:
+        imgs_list (list): A list of images to process.
+
+    Returns:
+        list: A list of binary masks corresponding to the input images.
+    """
+    masks = []
+    for img in imgs_list:
+        edges = compute_edges(img)
+        closed = morphological_transformations(edges)
+        mask, contours = fill_with_convex_hull(closed)
+        mask = remove_small_segments(mask)
+        masks.append(mask)
+    return masks
+
 def high_pass_filter(image, ksize=5):
-    """Apply a high-pass filter to the image."""
+    """
+    Apply a high-pass filter to an image.
+
+    Args:
+        image (numpy.ndarray): The input image to be filtered.
+        ksize (int, optional): The size of the kernel to be used for the 
+                               Gaussian blur. Must be an odd number. 
+                               Default is 5.
+
+    Returns:
+        numpy.ndarray: The high-pass filtered image.
+    """
     # Apply a Gaussian blur to get low-frequency components
     low_pass = cv2.GaussianBlur(image, (ksize, ksize), 0)
     # Subtract low-frequency components from the original image
@@ -37,6 +168,18 @@ def high_pass_filter(image, ksize=5):
     return high_pass
 
 def create_gaussian_pyramid(image, levels):
+    """
+    Generates a Gaussian pyramid for a given image.
+
+    Args:
+        image (numpy.ndarray): The input image for which the pyramid is to be created.
+        levels (int): The number of levels in the pyramid.
+
+    Returns:
+        list: A list of images representing the Gaussian pyramid, where the first element is the original image
+        and each subsequent element is a downsampled version of the previous one.
+    """
+
     pyramid = [image]
     for i in range(levels):
         image = cv2.pyrDown(image)
@@ -44,6 +187,18 @@ def create_gaussian_pyramid(image, levels):
     return pyramid
 
 def create_laplacian_pyramid(gaussian_pyramid):
+    """
+    Generates a Laplacian pyramid from a given Gaussian pyramid.
+
+    Args:
+        gaussian_pyramid (list): A list of images representing the Gaussian pyramid, where the first element
+                                 is the original image and each subsequent element is a downsampled version
+                                 of the previous one.
+
+    Returns:
+        list: A list of images representing the Laplacian pyramid, where each element is the difference
+              between the Gaussian-blurred image at that level and the expanded version of the next level.
+    """
     laplacian_pyramid = []
     for i in range(len(gaussian_pyramid)-1, 0, -1):
         size = (gaussian_pyramid[i-1].shape[1], gaussian_pyramid[i-1].shape[0])
@@ -53,12 +208,37 @@ def create_laplacian_pyramid(gaussian_pyramid):
     return laplacian_pyramid
 
 def apply_nlm_filter(laplacian_pyramid, h):
+    """
+    Apply Non-Local Means (NLM) denoising filter to each level of a Laplacian pyramid.
+
+    Args:
+        laplacian_pyramid (list of numpy.ndarray): A list of 2D arrays representing the Laplacian pyramid levels.
+        h (float): Parameter regulating filter strength. Higher h value removes noise better but also removes details.
+
+    Returns:
+        list of numpy.ndarray: A list of 2D arrays representing the denoised Laplacian pyramid levels.
+    """
+    # Apply NLM denoising to each level of the Laplacian pyramid
     denoised_pyramid = []
     for lap in laplacian_pyramid:
         denoised_pyramid.append(cv2.fastNlMeansDenoising(lap, None, h, 7, 21))  # You can adjust the NLM parameters if needed
     return denoised_pyramid
 
 def apply_bilateral_filter(laplacian_pyramid, d, sigma_color, sigma_space):
+    """
+    Apply a bilateral filter to each level of a Laplacian pyramid.
+
+    Args:
+        laplacian_pyramid (list of numpy.ndarray): A list of 2D arrays representing the Laplacian pyramid levels.
+        d (int): Diameter of each pixel neighborhood used during filtering.
+        sigma_color (float): Filter sigma in the color space. A larger value means that
+                             farther colors within the pixel neighborhood will be mixed together.
+        sigma_space (float): Filter sigma in the coordinate space. A larger value means that
+                             farther pixels will influence each other as long as their colors are close enough.
+
+    Returns:
+        list of numpy.ndarray: A list of 2D arrays representing the denoised Laplacian pyramid levels.
+    """
     denoised_pyramid = []
     for i, lap in enumerate(laplacian_pyramid):
         if i < len(laplacian_pyramid):
@@ -68,6 +248,16 @@ def apply_bilateral_filter(laplacian_pyramid, d, sigma_color, sigma_space):
     return denoised_pyramid
 
 def apply_median_filter(laplacian_pyramid, ksize):
+    """
+    Apply a median filter to each level of a Laplacian pyramid.
+
+    Args:
+        laplacian_pyramid (list of numpy.ndarray): A list of 2D arrays representing the Laplacian pyramid levels.
+        ksize (int): Size of the kernel to be used for the median filter. Must be an odd number.
+
+    Returns:
+        list of numpy.ndarray: A list of 2D arrays representing the denoised Laplacian pyramid levels.
+    """
     denoised_pyramid = []
     for i, lap in enumerate(laplacian_pyramid):
         if i < len(laplacian_pyramid):
@@ -77,6 +267,16 @@ def apply_median_filter(laplacian_pyramid, ksize):
     return denoised_pyramid
 
 def apply_gaussian_filter(laplacian_pyramid, ksize):
+    """
+    Apply a Gaussian filter to each level of a Laplacian pyramid.
+
+    Args:
+        laplacian_pyramid (list of numpy.ndarray): A list of 2D arrays representing the Laplacian pyramid levels.
+        ksize (int): Size of the kernel to be used for the Gaussian filter. Must be an odd number.
+
+    Returns:
+        list of numpy.ndarray: A list of 2D arrays representing the denoised Laplacian pyramid levels.
+    """
     denoised_pyramid = []
     for i, lap in enumerate(laplacian_pyramid):
         if i < len(laplacian_pyramid):
@@ -86,6 +286,16 @@ def apply_gaussian_filter(laplacian_pyramid, ksize):
     return denoised_pyramid
 
 def reconstruct_image(laplacian_pyramid, gaussian_base):
+    """
+    Reconstructs an image from its Laplacian pyramid and a Gaussian base image.
+
+    Args:
+        laplacian_pyramid (list of numpy.ndarray): A list of images representing the Laplacian pyramid.
+        gaussian_base (numpy.ndarray): The base image at the lowest resolution of the Gaussian pyramid.
+
+    Returns:
+        numpy.ndarray: The reconstructed image.
+    """
     current_image = gaussian_base
     for laplacian in laplacian_pyramid:
         size = (laplacian.shape[1], laplacian.shape[0])
@@ -94,13 +304,35 @@ def reconstruct_image(laplacian_pyramid, gaussian_base):
     return current_image
 
 def enhance_image_with_hp(denoised_image, ksize=5):
-    """Enhance the denoised image using high-pass filtering."""
+    """
+    Enhance a denoised image by adding high-frequency details using a high-pass filter.
+
+    Args:
+        denoised_image (numpy.ndarray): The input denoised image.
+        ksize (int, optional): The kernel size for the high-pass filter. Default is 5.
+
+    Returns:
+        numpy.ndarray: The enhanced image with high-frequency details added.
+    """
     high_pass_details = high_pass_filter(denoised_image, ksize)
     # Add high-frequency details back to the denoised image
     enhanced_image = cv2.add(denoised_image, high_pass_details)
     return enhanced_image
 
 def laplacian_pyramid_denoising(image, lowpass_params, pyramid_levels, method):
+    """
+    Perform denoising on an image using Laplacian pyramid decomposition and specified lowpass filtering method.
+
+    Args:
+        image (ndarray): The input image to be denoised.
+        lowpass_params (dict): Parameters for the lowpass filter method.
+        pyramid_levels (int): The number of levels in the pyramid.
+        method (str): The lowpass filter method to be applied.
+                      Supported methods are 'gaussian', 'median', 'bilateral', and 'nlm'.
+
+    Returns:
+        ndarray: The denoised image reconstructed from the Laplacian pyramid.
+    """
     gaussian_pyramid = create_gaussian_pyramid(image, pyramid_levels)
     laplacian_pyramid = create_laplacian_pyramid(gaussian_pyramid)
 
@@ -122,7 +354,7 @@ def wavelet_denoising_skimage(image, wavelet='db1', mode='soft', rescale_sigma=T
     """
     Apply wavelet denoising using skimage's denoise_wavelet function.
 
-    Parameters:
+    Args:
         image (ndarray): Input noisy color image.
         wavelet (str): Type of wavelet to use (e.g., 'db1' for Daubechies).
         mode (str): Thresholding mode ('soft' or 'hard').
@@ -140,7 +372,23 @@ def wavelet_denoising_skimage(image, wavelet='db1', mode='soft', rescale_sigma=T
     return denoised_image
 
 def apply_dct_denoising(image, threshold=30):
-    """Apply DCT-based denoising on an image."""
+    """
+    Apply DCT-based denoising to an image.
+    
+    This function performs denoising using the Discrete Cosine Transform (DCT). 
+    It applies DCT to each color channel of the image, thresholds the DCT coefficients 
+    to zero out small values (which are assumed to be noise), and then applies the 
+    inverse DCT to reconstruct the denoised image.
+
+    Args:
+        image (numpy.ndarray): The input image to be denoised.
+        threshold (float): The threshold value for zeroing out small DCT coefficients. 
+                           Coefficients with absolute values below this threshold will be set to zero.
+
+    Returns:
+        numpy.ndarray: The denoised image.
+    """
+    
     # Convert image to float32 for better precision in the DCT process
     image = np.float32(image) / 255.0
     
@@ -242,7 +490,7 @@ def create_denoised_dataset(noisy_dataset_path, denoised_dataset_path, method, l
     """
     Create a denoised dataset from a noisy dataset.
 
-    Parameters:
+    Args:
     - noisy_dataset_path: Path to the directory containing noisy images.
     - denoised_dataset_path: Path to save denoised images.
     - method: The denoising method ('gaussian', 'median', 'bilateral', 'nlm', 'wavelet', 'dct', 'laplacian', 'lowpass_highpass').
@@ -259,7 +507,7 @@ def create_denoised_dataset(noisy_dataset_path, denoised_dataset_path, method, l
     os.makedirs(denoised_dataset_path, exist_ok=True)
 
     # Iterate over all images in the noisy dataset directory
-    for filename in os.listdir(noisy_dataset_path):
+    for filename in tqdm.tqdm(os.listdir(noisy_dataset_path), desc="Denoising images"):
         if filename.lower().endswith('.jpg'):  # Check for valid image file extensions
             # Construct the full path to the noisy image
             noisy_image_path = os.path.join(noisy_dataset_path, filename)
@@ -319,33 +567,101 @@ def create_denoised_dataset(noisy_dataset_path, denoised_dataset_path, method, l
 
 # MAIN FUNCTION
 # ===========================================================
-def generate_submission_qst2(query_dir, bbdd_dir):        
+def generate_submission_qst2(query_dir, bbdd_dir):
     
-    # DETECT PAINTINGS IN QUERIES
+    # DETECT PAINTINGS IN QUERIES (SEGMENTATION)
     # ========================================================
-    
-    detected_paintings_folder = "data/detected_paintings"
+
+    masks_queries_dir = "data/masks_queries_dir"
+    cropped_queries_dir = "data/cropped_queries_dir"
 
     # Remove previous paintings in temporary folder
-    # if os.path.exists(detected_paintings_folder):
-    #     shutil.rmtree(detected_paintings_folder)
+    if os.path.exists(masks_queries_dir):
+        shutil.rmtree(masks_queries_dir)
+
+    if os.path.exists(cropped_queries_dir):
+        shutil.rmtree(cropped_queries_dir)
 
     # Create new temporary directory for denoised images
-    os.makedirs(detected_paintings_folder, exist_ok=True)
+    os.makedirs(masks_queries_dir, exist_ok=True)
+    os.makedirs(cropped_queries_dir, exist_ok=True)
     
     # Painting detection code/function HERE
-    
-    # All images are saved in the same temporary directory, in order (/detected_paintings)
+    # Denoise images
+    rgb_queries = []
+    gray_queries = []
+
+    for filename in os.listdir(query_dir):
+        if filename.endswith('.jpg'):
+            img_path = os.path.join(query_dir, filename)
+            img_rgb = cv2.imread(img_path)
+
+            if img_rgb is not None:
+                rgb_queries.append(img_rgb)
+                img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
+                gray_queries.append(img_gray)
+            else:
+                print(f"Warning: Failed to read {img_path}")
+
+    masks = generate_masks(rgb_queries)
+
+    paintings_per_image = []
+    image_counter = 0
+
+    for i, mask in enumerate(tqdm.tqdm(masks, desc="Generating segmentation masks and cropping images")):
+        # Save the mask
+        mask_filename = f"{i:05d}.png"
+        masks_save_path = os.path.join(masks_queries_dir, mask_filename)
+        cv2.imwrite(masks_save_path, mask)
+
+        # Detect connected components in the mask
+        num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(mask, connectivity=8)
+
+        # Count frames (objects of interest) in the current image
+        frame_count = 0
+
+        # Collect all valid components (ignoring background label 0)
+        components = []
+
+        for j in range(1, num_labels):
+            x, y, w, h, area = stats[j]
+
+            # Ignore very small components (noise)
+            if area > 100:  # Adjust the area threshold as needed
+                components.append((x, y, w, h, area))  # Store component details
+
+        # Sort components from rightmost to leftmost (higher x to lower x)
+        components_sorted = sorted(components, key=lambda c: c[0], reverse=True)
+
+        # Iterate over sorted components and save them
+        for (x, y, w, h, area) in components_sorted:
+            # Extract and save the cropped region
+            cropped_result = rgb_queries[i][y:y+h, x:x+w]
+            cropped_filename = f"{image_counter:05d}.jpg"
+            cropped_save_path = os.path.join(cropped_queries_dir, cropped_filename)
+            cv2.imwrite(cropped_save_path, cropped_result)
+
+            # Increment the counter for unique naming
+            image_counter += 1
+            frame_count += 1
+
+        # Add the number of paintings detected for this image to the list
+        paintings_per_image.append(frame_count)
+
+    # Save the list of frame counts per image in a single .pkl file
+    with open("data/paintings_per_image.pkl", "wb") as f:
+        pickle.dump(paintings_per_image, f)
+
+    # All images are saved in the same temporary directory, in order (/cropped_queries_dir)
     # A list is saved indicating the number of paintings per image (paintings_per_image.pkl)
+
+    # REMOVE NOISE FROM QUERY IMAGES
+    # =========================================================
     
     # Load list containing paintings per image
     with open('data/paintings_per_image.pkl', 'rb') as file:
         paintings_per_image = pickle.load(file)
-    
-    
-    # REMOVE NOISE FROM QUERY IMAGES
-    # =========================================================
-    
+
     denoised_paintings_folder = 'data/denoised_paintings'
 
     # Remove previous paintings
@@ -357,13 +673,12 @@ def generate_submission_qst2(query_dir, bbdd_dir):
     
     # Using denoising method 5
     create_denoised_dataset(
-        noisy_dataset_path = detected_paintings_folder,
+        noisy_dataset_path = cropped_queries_dir,
         denoised_dataset_path = denoised_paintings_folder,
         method='wavelet',
         wavelet_params={'wavelet':'db1', 'mode':'soft', 'rescale_sigma':True},
         highpass=False
     )
-    
     
     # EXTRACT TEXTURE FEATURES FROM DENOISED QUERIES AND BBDD
     # =========================================================
@@ -401,7 +716,6 @@ def generate_submission_qst2(query_dir, bbdd_dir):
     # Generate sorted results
     results = generate_results(distance_matrix, distance_measure)
     
-    
     # GENERATE SUBMISSION
     # =========================================================
     
@@ -416,7 +730,7 @@ def generate_submission_qst2(query_dir, bbdd_dir):
     
     # Add the top K predictions depending on the number of paintings per image
     i = 0
-    for num_paintings in paintings_per_image:
+    for num_paintings in tqdm.tqdm(paintings_per_image, desc="Saving top K predictions"):
         if num_paintings == 1:
             submission.append([results_topK[i]])
             i += 1
