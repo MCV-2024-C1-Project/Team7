@@ -44,9 +44,11 @@ python generate_submission_cropped.py \
 
 2. For the predictions for the images with background (**QST2_W3**), as well as the corresponding masks, please execute `generate_submission_background.py` as is indicated next. In this file, the best denoising and best texture methods have been used, as well as a method to detect and extract the paintings present in each image.
 
+```
 python generate_submission_background.py \
 --queries-dir "./data/qst2_w3/" \
 --bbdd-dir "./data/BBDD/"
+```
 
 For more information on the methods used in these files, see the following sections.
 
