@@ -326,9 +326,9 @@ def generate_submission_qst2(query_dir, bbdd_dir):
     
     detected_paintings_folder = "data/detected_paintings"
 
-    # Remove previous paintings
-    if os.path.exists(detected_paintings_folder):
-        shutil.rmtree(detected_paintings_folder)
+    # Remove previous paintings in temporary folder
+    # if os.path.exists(detected_paintings_folder):
+    #     shutil.rmtree(detected_paintings_folder)
 
     # Create new temporary directory for denoised images
     os.makedirs(detected_paintings_folder, exist_ok=True)
@@ -339,7 +339,7 @@ def generate_submission_qst2(query_dir, bbdd_dir):
     # A list is saved indicating the number of paintings per image (paintings_per_image.pkl)
     
     # Load list containing paintings per image
-    with open('paintings_per_image.pkl', 'rb') as file:
+    with open('data/paintings_per_image.pkl', 'rb') as file:
         paintings_per_image = pickle.load(file)
     
     
