@@ -85,12 +85,20 @@ A total of **360** different parameter combinations have been tested. They are t
 - **Number of relevant coefficients**: 64, 32, 16, 8, 4
 - **Distance measure**: Cosine similarity, Pearson correlation, L1, L2
 
+Here is the distribution of the scores obtained for all combinations:
+
+![scores distribution for the different DCT combinations](figs/score_distribution_DCT.jpg)
+
 Next are the highlights after analyzing the results:
 - The V color channel performs better on average than the other color channels.
 - The Cosine/Pearson distances perform significantly better on average than L1 and L2
 - Very high or very log dimensional feature vectors perform bad on average.
 - Out of the 360 different combinations, 30 of them have perfect scores (MAP@1 and MAP@5 both equal to 1).
 - The best variant corresponds to: *using V channel, Cosine distance, block size of 64, 64 relevant coefficients* (see DCT results analysis for more information on this decision).
+
+Additionally, an interesting thing to analyze is how the dimension of the final feature vector affects performance on average. The following is a plot that illustrates this, showing that more dimensions past a certain point decreases performance.
+
+![feautre vector dimension performance comparison for DCT](figs/dimension_comparison_DCT.jpg)
 
 #### LBP
 
@@ -104,11 +112,19 @@ A total of **324** different parameter combinations have been tested. They are t
 - **Distance measure**: Bhattacharyya, Correlation, Intersection
 The multi-resolution LBP approach has also been tested (concatinating all three combinations of raidus/points pairs), but the results are similar to the best results found with the single-resolution approach, although higher dimensional.
 
+Here is the distribution of the scores obtained for all combinations:
+
+![scores distribution for the different LBP combinations](figs/score_distribution_LBP.jpg)
+
 Next are the highlights after analyzing the results:
 - The L color channel performs better on average, although not by much.
 - The more blocks that are used, the better the results (on average).
 - The defualt calculation method is much better. We believe this is because the "ror" method (roation invariant) produces sparse vectors (as processed with our functions), and thus distances cannot be properly calculated with them. On the other hand, the uniform method has been designed to be fast to compute, so the information is (in our case) too compressed (the feature vectors are low dimensional).
 - The best variant corresponds to: *using the L channel, Bhattacharyya distance, radius of 3 together with 12 neighboring points, and using the default calculation method* (see LBP results analysis for more information on this decision).
+
+One of the most influential parameters has been the number of blocks. Here is a plot showing this influence, representing the distribution of MAP@1 scores for different numbers of blocks:
+
+![number of blocks performance comparison for LBP approach](figs/num_blocks_comparison_LBP.jpg)
 
 #### Wavelets
 
@@ -129,10 +145,12 @@ To analyze how noise affects peformance, the best variants of all four methods h
 ![results for the performance with and without noise](figs/noise_performance_table.png)
 
 Analyzing the results, the following comments can be made:
-- aaa
-- aaa
-- aaa
-- aaa
+- The best approach is clearly DCT.
+- DCT doesn't show decreased performance even when dealing with noisy images.
+- In general, model performance decreases when dealing with noisy or denoised images.
+- In general, model performance increases when denoising is applied, with respect to using the non-denoised dataset.
+- The best denoising methods are number 3 and number 5
+- Method number 4 makes performance worse than without removing the noise.
 
 
 ### Task 3
