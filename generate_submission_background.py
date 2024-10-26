@@ -629,7 +629,9 @@ def generate_submission_qst2(query_dir, bbdd_dir):
     # Create new directories for masks and cropped images
     os.makedirs(masks_queries_dir, exist_ok=True)
     os.makedirs(cropped_queries_dir, exist_ok=True)
-    
+
+    masks = generate_masks(rgb_queries_denoised)
+
     # Read query images
     rgb_queries = []
     for filename in os.listdir(query_dir):
@@ -637,14 +639,16 @@ def generate_submission_qst2(query_dir, bbdd_dir):
             img_path = os.path.join(query_dir, filename)
             img_rgb = cv2.imread(img_path)
             if img_rgb is not None:
-                rgb_queries_denoised.append(img_rgb)
+                rgb_queries.append(img_rgb)
             else:
                 print(f"Warning: Failed to read {img_path}")
-
-    masks = generate_masks(rgb_queries_denoised)
-
+    
     paintings_per_image = []
     image_counter = 0
+
+    print("Length of masks:", len(masks))
+    print("Length of rgb_queries:", len(rgb_queries))
+    print("Length of rgb_queries_denoised:", len(rgb_queries_denoised))
 
     for i, mask in enumerate(tqdm.tqdm(masks, desc="Generating segmentation masks and cropping images")):
         # Save the mask
