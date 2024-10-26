@@ -183,10 +183,21 @@ TO DO
 
 ### Texture extraction related files
 
-TO DO
-TO DO
-TO DO
+For the DCT approach, there are 3 different files of interest:
+- `DCT_study.py`: executes the parameter grid and saves the results in a csv file.
+- `DCT study - results analysis.ipynb`: analyzes the results csv with plots and other calculations.
+- `DCT study - example visualization`: visually represents how the texture features of an example image are extracted, using the best variant of the DCT approach.
+- Other helper functions have been defined and distributed in different utils files, most notably in the `DCT.py` utils script.
 
+For the LBP approach, similarly to the DCT approach, there are 3 different files of interest:
+- `LBP_study.py`: executes the parameter grid and saves the results in a csv file.
+- `LBP study - results analysis.ipynb`: analyzes the results csv with plots and other calculations.
+- `LBP study - example visualization`: visually represents how the texture features of an example image are extracted, using the best variant of the DCT approach.
+- Other helper functions have been defined and distributed in different utils files, most notably in the `LBP.py` utils script.
+
+For the Wavelets approach... TO DO TO DO TO DO
+
+For the Gabor filters approach... TO DO TO DO TO DO
 
 ### Painting detection and background removal related filed
 
@@ -197,7 +208,7 @@ TO DO
 
 ### Full pipeline related files
 
-TO DO
-TO DO
-TO DO
+The execution of all methods combined in a single pipeline happens in the `generate_submission_background.py` file, where the best approaches identified for image segmentation, noise removal and texture extraction have been used. This is also the file that generates the sumbission for the QST2_W3 dataset, as explained at the begginning of this report.
+
+The pipeline for already cropped images, only using noise removal and feature extraction, is encapsulated in the `generate_submission_cropped.py` file. Again, this is also the file that generates the submission for the QST1_W3 dataset.
 
