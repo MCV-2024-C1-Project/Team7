@@ -122,21 +122,11 @@ TO DO
 TO DO
 TO DO
 
-### Studying how the presence of noise affects performance
+#### Studying how the presence of noise affects performance
 
 To analyze how noise affects peformance, the best variants of all four methods have been tested not only with the clean QSD1_W3 dataset (which is the one used to perform the studies), but also with the noisy QSD1_W3 dataset, as well as with 5 different versions of denoised datasets (see Task 1 for more info on the denoising methods). The results are shown in the following table:
 
-| Method (best parameters) | MAP@1 No noise | MAP@1 Filtered noise (different methods) | MAP@1 Noise |
-|--------------------------|----------------|-------------------------------------------|-------------|
-|                          |                | M. 1 | M. 2 | M. 3 | M. 4 | M. 5       |             |
-| **DCT**                  | 1.000          | 1.000 | 1.000 | 1.000 | 1.000 | 0.933 | 1.000       | 1.000       |
-| *V, Cosine, 64 B. size, 64 Coeffs.* |   |   |   |   |   |   |   |
-| **LBP**                  | 1.000          | 0.833 | 0.900 | 0.933 | 0.433 | 0.933 | 0.900       |
-| *L, Bhatt., 3 rad, 12 p., def met., 16 b.* |   |   |   |   |   |   |
-| **Wavelets**             | 0.133          | 0.100 | 0.133 | 0.166 | 0.033 | 0.100 | 0.066       |
-| *dmey, Cosine*           |                |       |       |       |       |       |             |
-| **Gabor filters**        |                |       |       |       |       | 0.033 |             |
-| *1 filter, correlation*  |                |       |       |       |       |       |             |
+![results for the performance with and without noise](figs/noise_performance_table.jpg)
 
 Analyzing the results, the following comments can be made:
 - aaa
