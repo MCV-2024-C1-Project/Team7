@@ -4,6 +4,7 @@ import cv2
 import os
 import pywt
 import shutil
+import pickle
 from skimage.measure import shannon_entropy
 from skimage.restoration import denoise_wavelet
 
@@ -382,8 +383,23 @@ def generate_submission_qst1(query_dir, bbdd_dir):
     # GENERATE SUBMISSION
     # =========================================================
 
-    results_file = "result.pkl"
-    generate_submission(results, k_val=10, output_path=results_file)
+    # Top K best results
+    k=10
+    
+    # Extracting the top K best results from each prediction
+    results_topK = np.array(results)[:,:k].tolist()
+
+    # Final sumbission list of lists of lists
+    submission = []
+
+    # Add an extra list level
+    for result in results_topK:
+        submission.append([result])
+    
+    # Save submission results
+    writer = open("result.pkl", 'wb')
+    pickle.dump(submission, writer)
+    writer.close()
 
 def main():
 

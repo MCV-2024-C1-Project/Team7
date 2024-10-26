@@ -751,7 +751,7 @@ def generate_submission_qst2(query_dir, bbdd_dir):
             submission.append([results_topK[i]])
             i += 1
         elif num_paintings == 2:
-            submission.append([results_topK[i], results_topK[i+1]])
+            submission.append([results_topK[i+1], results_topK[i]])
             i += 2
     
     # Save submission results
