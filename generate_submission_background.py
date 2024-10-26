@@ -34,7 +34,7 @@ def compute_edges(image, threshold1=100, threshold2=200):
     """
     Computes edges in an image using the Canny edge detection algorithm.
 
-    Args:
+    Parameters:
         image (ndarray): Input image, can be grayscale or RGB.
         threshold1 (int): First threshold for the hysteresis procedure.
         threshold2 (int): Second threshold for the hysteresis procedure.
@@ -53,30 +53,30 @@ def compute_edges(image, threshold1=100, threshold2=200):
     
     return edges
 
-def morphological_transformations(edges):
+def closing(edges):
     """
     Applies morphological transformations to close gaps in the edges.
 
-    Args:
+    Parameters:
         edges (ndarray): Binary image with edges detected.
 
     Returns:
         ndarray: Binary image after morphological transformations.
     """
     # Perform morphological closing to fill gaps in the edges
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (27, 27))  # Use a kernel size of your choice
-    closed = cv2.dilate(edges, kernel, iterations=1)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (27, 27))
+    dilated = cv2.dilate(edges, kernel, iterations=1)
 
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (17, 17))  # Use a kernel size of your choice
-    opened = cv2.erode(closed, kernel, iterations=1)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (17, 17))
+    eroded = cv2.erode(dilated, kernel, iterations=1)
 
-    return opened
+    return eroded
 
 def fill_with_convex_hull(edges):
     """
     Fills the detected edges with convex hulls of the largest contours.
 
-    Args:
+    Parameters:
         edges (ndarray): Binary image with edges detected.
 
     Returns:
@@ -101,11 +101,27 @@ def fill_with_convex_hull(edges):
 
     return mask, contours
 
-def remove_small_segments(mask, min_area=2000):
+def erosion(mask):
+    """
+    Applies morphological transformations to erode the mask.
+
+    Parameters:
+        mask (ndarray): Binary mask with filled convex hulls.
+
+    Returns:
+        ndarray: Binary mask after morphological transformations.
+    """
+    # Perform morphological erosion to remove noise
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (25, 25))
+    eroded = cv2.erode(mask, kernel, iterations=1)
+
+    return eroded
+
+def remove_small_segments(mask, min_area=1000):
     """
     Removes small segmented areas from a binary mask based on a minimum area threshold.
     
-    Args:
+    Parameters:
         mask (ndarray): Binary mask where segmented areas are white (255) and background is black (0).
         min_area (int): Minimum area (in pixels) to keep. Components smaller than this will be removed.
     
@@ -129,21 +145,21 @@ def remove_small_segments(mask, min_area=2000):
 
 def generate_masks(imgs_list):
     """
-    Generate binary masks for a list of images.
-    The process involves computing edges, applying morphological transformations, 
-    filling with convex hull, and removing small segments.
+    Generates masks for a list of images by detecting edges, closing gaps,
+    filling with convex hulls, and applying erosion.
 
-    Args:
-        imgs_list (list): A list of images to process.
+    Parameters:
+        imgs_list (list): List of images (ndarray) to process.
 
     Returns:
-        list: A list of binary masks corresponding to the input images.
+        list: List of binary masks (ndarray) for each image.
     """
     masks = []
     for img in imgs_list:
         edges = compute_edges(img)
-        closed = morphological_transformations(edges)
+        closed = closing(edges)
         mask, contours = fill_with_convex_hull(closed)
+        mask = erosion(mask)
         mask = remove_small_segments(mask)
         masks.append(mask)
     return masks
