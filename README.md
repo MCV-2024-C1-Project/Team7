@@ -234,11 +234,8 @@ For the Gabor filters approach theere are 3 files of interest:
 -`wavelet_and_gabor_results`: does a small analisis of the results obtained after applying the gabor filters.
 
 ### Painting detection and background removal related files
-
-TO DO
-TO DO
-TO DO
-
+- `week3_crop_images.py`: this script processes all the query images in a directory according to the pipeline described in task 3. It returns the cropped images and the corresponding masks.
+- `segmentation_week3.ipynb`: this is the notebook where the tests for the segmentation task were developed.
 
 ### Full pipeline related files
 
