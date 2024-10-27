@@ -225,9 +225,15 @@ For the LBP approach, similarly to the DCT approach, there are 3 different files
 - `LBP study - example visualization`: visually represents how the texture features of an example image are extracted, using the best variant of the DCT approach.
 - Other helper functions have been defined and distributed in different utils files, most notably in the `LBP.py` utils script.
 
-For the Wavelets approach... TO DO TO DO TO DO
+For the Wavelets approach theere are 3 files of interest:
+-`apply_wavelet`: executes the parameter grid and saves the results in different csv files.
+-`texture_descriptors_tries`: contains example images and basic filter using.
+-`wavelet_and_gabor_results`: does a small analisis of the results obtained after applying the wavelet.
 
-For the Gabor filters approach... TO DO TO DO TO DO
+For the Gabor filters approach theere are 3 files of interest:
+-`apply_gabor_filters`: executes the parameter grid and saves the results in different csv files.
+-`texture_descriptors_tries`: contains example images and basic filter using.
+-`wavelet_and_gabor_results`: does a small analisis of the results obtained after applying the gabor filters.
 
 ### Painting detection and background removal related filed
 
