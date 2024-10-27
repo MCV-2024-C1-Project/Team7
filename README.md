@@ -128,12 +128,29 @@ One of the most influential parameters has been the number of blocks. Here is a 
 
 #### Wavelets
 
-TO DO
-TO DO
-TO DO
+For this aproach the main library for the methods has been PyWavelet and the function `dwt2`, the used wavelets have been one of each type in the discrete family of wavelets that the library has. The procedure follows a similar path at the start as the other two before, first taking the image and then extracting the channels that are of interest, after this common path it diverges, the wavelet coefficients are extracted and then passed through a PCA on both dimensions to reduce dimensionality and obtain the same size on all images, after this the image is flattened to a vector. When using the RGB image as the `dwt2` returns two coeffs. for pixel the magnitude has been computed to extract only one value for pixel.
+
+Explored combinations of these parameters (336 combinations):
+- **Color**: RGB, gray, V (HSV), L (CIELAB)
+- **PCA**: 100 (RBG), 50 (gray, V, L)
+- **Wavelets**: bior, coif, db, dmey, haar, rbio, sym
+- **Directions**: Vertical, Horizontal, Diagonal
+- **Distance measure**: L1, L2, Pearson correlation, Cosine Similarity
+
+From this execution the one that gave the best results was the RGB, with a `MAP@1` of 0.133. On this case we can observe that on the best 20 results the vertical wavelet appears more than twice the times that the diagonal apears. 
+
+![direction_comparison_on_20_best_results_wavelet_RGB](figs/direction_comparison_wav.png)
+
+And with a complete observation and statistics extraction of the results with the RGB methods we can see how the vertical dominates the rest of directions with a greater mean and maximum.
+| Direction  | Mean  | STD   | min | max  |
+|------------|-------|-------|-----|------|
+| Diagonal   | 0.007 | 0.014 | 0   | 0.033 |
+| Horizontal | 0     | 0     | 0   | 0    |
+| Vertical   | 0.057 | 0.06  | 0   | 0.133 |
 
 #### Gabor filters
 
+This filters aproach has required the use of OpenCV function `getGaborKernels`. The main idea in this one is to try a simpler method to see how it works; the pipeline consists in a grayscale extraction of the image, then the application of the gabor filters and finaly the histogram extraction.
 TO DO
 TO DO
 TO DO
@@ -172,7 +189,7 @@ TO DO
 
 <h2 id="files-in-this-project">📂 Files in this project</h2>
 
-Here you can find a bief description of the most relevant files and functions that we created to solve this week's tasks. They will be divided into different sections, corresponding to the main tasks of this week.
+Here you can find a brief description of the most relevant files and functions that we created to solve this week's tasks. They will be divided into different sections, corresponding to the main tasks of this week.
 
 ### Noise removal related files
 
