@@ -130,7 +130,7 @@ One of the most influential parameters has been the number of blocks. Here is a 
 
 For this aproach the main library for the methods has been PyWavelet and the function `dwt2`, the used wavelets have been one of each type in the discrete family of wavelets that the library has. The procedure follows a similar path at the start as the other two before, first taking the image and then extracting the channels that are of interest, after this common path it diverges, the wavelet coefficients are extracted and then passed through a PCA on both dimensions to reduce dimensionality and obtain the same size on all images, after this the image is flattened to a vector. When using the RGB image as the `dwt2` returns two coeffs. for pixel the magnitude has been computed to extract only one value for pixel.
 
-Explored combinations of these parameters (336 combinations):
+A total of **336** different parameter combinations have been tested. They are the following:
 - **Color**: RGB, gray, V (HSV), L (CIELAB)
 - **PCA**: 100 (RBG), 50 (gray, V, L)
 - **Wavelets**: bior, coif, db, dmey, haar, rbio, sym
@@ -150,10 +150,17 @@ And with a complete observation and statistics extraction of the results with th
 
 #### Gabor filters
 
-This filters aproach has required the use of OpenCV function `getGaborKernels`. The main idea in this one is to try a simpler method to see how it works; the pipeline consists in a grayscale extraction of the image, then the application of the gabor filters and finaly the histogram extraction.
-TO DO
-TO DO
-TO DO
+This filters aproach has required the use of OpenCV function `getGaborKernels`. The main idea in this one is to try a simpler method to see how it works; the pipeline consists in a grayscale extraction of the image, then the application of the gabor filters and finaly the histogram extraction. 
+
+A total of **36** different parameter combinations have been tested. They are the following:
+- **Number of angles**: 1, 2, 4, 8, 16, 32
+- **Distance measures**: Correlation, Chi-Square, Intersection, Bhattacharyya, Hellinger, Kl-divergence
+  
+From this aproach the results obtained did not raise from an `MAP@1` of 0.33, and the apperances of the diferent distances and number of angles did not show any tendency more than the best results were given by the correlation and intersection measurements. However it must be said that gabor gives a great visual description of what the filters detected on the image as we can see on the next images: 
+
+Original image             |  Gray Gabor image
+:-------------------------:|:-------------------------:
+![no_gabor_img](figs/Pre_gabor.png)  |  ![gray_gabor_img](figs/Gabor_applied.png)
 
 #### Studying how the presence of noise affects performance
 
@@ -163,6 +170,7 @@ To analyze how noise affects peformance, the best variants of all four methods h
 
 Analyzing the results, the following comments can be made:
 - The best approach is clearly DCT.
+- The aproaches that use image splitting give better results than the ones that do not.
 - DCT doesn't show decreased performance even when dealing with noisy images.
 - In general, model performance decreases when dealing with noisy or denoised images.
 - In general, model performance increases when denoising is applied, with respect to using the non-denoised dataset.
