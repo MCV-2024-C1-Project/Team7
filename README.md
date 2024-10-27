@@ -190,6 +190,7 @@ The chosen method for this segmentation task consists of several steps:
 5. Erosion
 6. Removing small polygons (if there are any)
 
+![Example of the results after applying each of the steps of the segmentation pipeline over a sample (step 6 is not shown, as the outcome is the same as in step 5)](figs/segmentation_example.png)
 
 ### Task 4
 In Task 4, we must combina all the previous methods, so that we can go from a raw, noisy image to the predictions for the paintings found in the image.
