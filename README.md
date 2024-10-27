@@ -203,9 +203,10 @@ Here you can find a brief description of the most relevant files and functions t
 
 ### Noise removal related files
 
-TO DO
-TO DO
-TO DO
+- `denoising.ipynb`: Notebook structured into three key sections:
+  - Noise Estimation: Analyzes methods to determine image noise levels, identifying the most effective of four approaches and the optimal threshold for it. Includes PR and ROC curve evaluations.
+  - Denoising Methods Exploration: Conducts an exploratory analysis of various denoising methods, including a grid search for optimal parameters per method. The study includes performance comparisons and visual results, covering Low Pass filters, combinations of Low Pass filters with Laplacian pyramid levels, Wavelet filters, and DCT filters.
+  - Denoised Dataset Generation: Provides a function to generate a denoised dataset using any implemented method with custom parameters and combinations, such as optional high-pass enhancement or applying denoising only when noise estimation exceeds a specified threshold.
 
 
 ### Texture extraction related files
