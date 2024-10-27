@@ -63,11 +63,53 @@ This week we must tackle three distinct challenges:
 At the end, the different methods to solve these challenges will be combined in a single pipeline, going from a raw, noisy image with one or two paintings, to the predictions corresponding to those paintings (**Task 4**).
 
 ### Task 1
-In Task 1, we must develop and test one or more methods to filter the noise in the images. Additionally, it is specified that we must do this using linear or non-linear filters.
 
-TO DO
-TO DO
-TO DO
+In **Task 1**, our objective is to identify and filter noise in images effectively. The challenge is addressed in two main phases: **Noise Estimation** and **Denoising**.
+
+### Noise Estimation
+
+Since only some images contain noise, selective denoising is necessary to avoid introducing unwanted artifacts. We evaluated four noise estimation methods:
+
+1. **Variance**: Measures pixel intensity spread; useful for general noise but may miss isolated salt-and-pepper noise.
+2. **Wavelet-based Estimation**: Captures localized noise by isolating high-frequency components, effective for detecting salt-and-pepper noise.
+3. **Laplacian Filter**: Detects noise by emphasizing pixel intensity changes, ideal for sharper noise patterns like salt-and-pepper.
+4. **Entropy**: Measures pixel randomness; effective for some noise but may mistake texture as noise due to high detail.
+
+#### Findings
+
+- The **Laplacian method** was determined to be the most reliable, with a significantly higher correlation to actual noise compared to the other methods.
+- **Optimal threshold for noise detection**: Based on ROC analysis, a threshold of **38.56** provides the best balance, detecting the noisiest images without overestimating noise in clean images.
+
+### Denoising Methods
+
+With noise estimation in place, we focused on testing and optimizing various denoising techniques. We explored **Low Pass Filters, Wavelet Filters, Laplacian Pyramids**, and **DCT Filters**, comparing their performance in terms of detail preservation and noise reduction. The techniques and configurations tested include:
+
+1. **Gaussian Blur**: Smooths noise but can blur edges.
+2. **Median Blur**: Effectively removes salt-and-pepper noise, ideal for sharp artifacts.
+3. **Bilateral Filter**: Maintains edges while reducing noise.
+4. **Non-Local Means (NLM)**: Reduces noise by averaging similar patches, preserving fine details.
+5. **Wavelet Filter**: Decomposes the image, enabling selective denoising on different frequency components, effectively retaining structural details.
+6. **Discrete Cosine Transform (DCT) Filter**: Converts the image to the frequency domain, isolating low-frequency components for denoising. However, since DCT is best suited for periodic noise, might not perfmorm too good in this case.
+7. **Laplacian Pyramids**: Utilizes multi-scale decomposition to apply low-pass filters(1. to 4.) at different pyramid levels, allowing for targeted denoising while preserving edges. This approach helps maintain structural integrity in images by reducing noise without excessive smoothing.
+
+Additionally, we explored **enhancements** to these filters:
+   - **High-pass Filtering**: Applied after denoising to enhance edges.
+
+#### Key Insights from Denoising
+
+- **Gaussian Blur** and **Wavelet Filtering** showed the highest performance in terms of noise reduction and structural preservation.
+- High-pass enhancement generally had minimal effect and occasionally reduced lower quartile values, suggesting limited improvement.
+- The **Laplacian Pyramid** approach, when combined with low-pass filters, sometimes amplifies noise, giving worts results than applying the same filters without pyramid.
+
+#### Selected Methods for Final Pipeline
+
+From these findings, we selected the following configurations as the bests ones or more intreresting ones to further test:
+
+- **Method 1**: Gaussian Blur (`ksize = 3x3`), applied to all images without enhancements.
+- **Method 2**: Gaussian Blur (`ksize = 3x3`) with high-pass enhancement.
+- **Method 3**: Gaussian Blur (`ksize = 3x3`), applied only if noise estimation exceeds threshold (Laplacian threshold = 38.56).
+- **Method 4**: Gaussian Blur with **3 levels Laplacian Pyramid** application and high-pass enhancement, applied to all images.
+- **Method 5**: **Wavelet Filter** (`wavelet='db1'`, `level=1`, `thresholding='soft'`), effective for preserving image structure, applied to all images.
 
 
 ### Task 2
