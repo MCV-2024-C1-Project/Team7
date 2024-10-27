@@ -173,9 +173,14 @@ Analyzing the results, the following comments can be made:
 ### Task 3
 In Task 3, we must be able to detect all the paintings in an image, then extract those paintings, effectively removing the background. In addition, a binary mask must be created so the developed method can be evaluated.
 
-TO DO
-TO DO
-TO DO
+The chosen method for this segmentation task consists of several steps:
+
+1. Gaussian denoising
+2. Canny edge detection
+3. Closing
+4. Two largest contour filling with Convex Hulls
+5. Erosion
+6. Removing small polygons (if there are any)
 
 
 ### Task 4
