@@ -195,13 +195,7 @@ The following figure shows an example of the results after applying each of the 
 ![Example of the results after applying each of the steps of the segmentation pipeline over a sample (step 6 is not shown, as the outcome is the same as in step 5)](figs/segmentation_example.png)
 
 ### Task 4
-In Task 4, we must combina all the previous methods, so that we can go from a raw, noisy image to the predictions for the paintings found in the image.
-
-TO DO
-TO DO
-TO DO
-
-
+In Task 4, we must combine all the previous methods, so that we can go from a raw, noisy image to the predictions for the paintings found in the image. The file `generate_submission_background.py` computes the steps described in tasks 1, 2 and 3 in a single pipeline, generating the top K predictions for each of the queries.
 
 <h2 id="files-in-this-project">📂 Files in this project</h2>
 
@@ -238,7 +232,7 @@ For the Gabor filters approach theere are 3 files of interest:
 -`texture_descriptors_tries`: contains example images and basic filter using.
 -`wavelet_and_gabor_results`: does a small analisis of the results obtained after applying the gabor filters.
 
-### Painting detection and background removal related filed
+### Painting detection and background removal related files
 
 TO DO
 TO DO
