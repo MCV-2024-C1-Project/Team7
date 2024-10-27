@@ -93,6 +93,7 @@ With noise estimation in place, we focused on testing and optimizing various den
 7. **Laplacian Pyramids**: Utilizes multi-scale decomposition to apply low-pass filters(1. to 4.) at different pyramid levels, allowing for targeted denoising while preserving edges. This approach helps maintain structural integrity in images by reducing noise without excessive smoothing.
 
 The box plots below compare the performance between the studied denoising methods. The similarity score is computed betwwen the denoised images and the ones without noise (ground truth).
+
 ![Comparison of denoising methods by Similarity](figs/boxp_pyr3_lp.png)
 ![Comparison of denoising methods by Similarity (Wavelet)](figs/boxp_Wavelet.png)
 ![Comparison of denoising methods by Similarity (DCT)](figs/boxp_dct.png)
@@ -102,6 +103,7 @@ Additionally, we explored **enhancements** to these filters:
    - **High-pass Filtering**: Applied after denoising to enhance edges.
 
 The following box plot shows the impact of High-Pass filtering on the similarity between the denoised images and the ground truth images.
+
 ![Box Plot of Similarity Scores with and without High-Pass Filtering](figs/hp_filtering_box_plot_repeating_colors.png)
 
 #### Key Insights from Denoising
