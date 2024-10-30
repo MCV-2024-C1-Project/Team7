@@ -26,6 +26,37 @@ def get_SIFT_key_des(image):
     sift = cv2.SIFT_create()
 
     # Detect SIFT features (keypoints and descriptors)
-    keypoints, descriptors = sift.detectAndCompute(image, None)
+    keypoints, descriptors = sift.detectAndCompute(grayscale_image, None)
     
     return keypoints, descriptors
+
+def get_SIFT_key_des_multi_image(images_list):
+    """
+    Given a list of loaded images, detects their keypoints using the SIFT
+    detector and calculates their corresponding SIFT descriptors.
+    
+    Args:
+    - images_list (list of ndarrays): list of loaded images.
+    
+    Returns:
+    - key_des_list (list of dictionaries): list of dictionaries, each
+                    dictionary containing the keypoints and descriptors
+                    for each image.
+    """
+    
+    # Save the keypoints and descriptors in a list
+    key_des_list = []
+    
+    for image in images_list:
+        # Get the keypoints and descriptors for each image
+        keypoints, descriptors = get_SIFT_key_des(image)
+        
+        # Save them in a dictionary
+        image_key_des = {}
+        image_key_des['keypoints'] = keypoints
+        image_key_des['descriptors'] = descriptors
+        
+        # Save the dictionary in the general list of keypoints and descriptors
+        key_des_list.append(image_key_des)
+        
+    return key_des_list
