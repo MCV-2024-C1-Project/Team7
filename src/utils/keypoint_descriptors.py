@@ -1,4 +1,5 @@
 import cv2
+import matplotlib.pyplot as plt
 
 # Difference of Gaussians (SIFT)
 # =========================================================
@@ -60,3 +61,87 @@ def get_SIFT_key_des_multi_image(images_list):
         key_des_list.append(image_key_des)
         
     return key_des_list
+
+def get_num_SIFT_matches(descriptors_image_1, descriptors_image_2):
+    """
+    Calculates the number of matching SIFT descriptors between two list of
+    descriptors representing two different images. It uses the Brute Force
+    Matcher from OpenCV with the L1 distance, as this is the recommended
+    distance for SIFT. Also, crossCheck is used so that the ratio test is
+    not necessary.
+    
+    Args:
+    - descriptors_image_1: list of SIFT descriptors from image 1.
+    - descriptors_image_2: list of SIFT descriptors from image 2.
+    
+    Returns:
+    - num_matches (int): the number of matching descriptors.
+    """
+    
+    # Create feature matcher
+    matcher = cv2.BFMatcher(cv2.NORM_L1, crossCheck=True)
+
+    # Match descriptors of both images
+    matches = matcher.match(descriptors_image_1, descriptors_image_2)
+    
+    # Calculate number of matches
+    num_matches = len(matches)
+    
+    return num_matches
+
+def draw_SIFT_keypoints(image, keypoints, figsize=(5,5)):
+    """
+    Plots the image in RGB along with the SIFT keypoints found for
+    the image using OpenCV drawKeypoints()
+    
+    Args:
+    - image (ndarray): loaded image to plot (in BGR)
+    - keypoints: list of keypoints for the image found using OpenCV's SIFT
+    - figsize (tuple): tuple of two ints determine the figure size.
+    """
+    
+    # Convert color space to rgb, so it can be visualized
+    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    
+    # Call the OpenCV keypoint drawing function
+    image_with_keypoints = cv2.drawKeypoints(image_rgb, keypoints, None, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+    
+    # Display the result using matplotlib
+    plt.figure(figsize=figsize)
+    plt.imshow(image_with_keypoints, cmap='gray')
+    plt.title("SIFT Keypoints")
+    plt.axis('off')
+    plt.show()
+
+def draw_SIFT_matches(image_1, image_2, keypoints_1, keypoints_2, matches, num_matches, figsize=(7,7)):
+    """
+    Draws two images and lines connecting their SIFT matching features.
+
+    Args:
+    - image_1 (ndarray): the first (loaded) image in BGR
+    - image_2 (ndarray): the second (loaded) image in BGR
+    - keypoints_1: the SIFT keypoints of the first image.
+    - keypoints_2: the SIFT keypoints of the second image.
+    - matches: the list of SIFT descriptors matches.
+    - figsize (tuple): tuple of two ints determine the figure size.
+    """
+    
+    # Convert color space to rgb, so it can be visualized
+    image_1_rgb = cv2.cvtColor(image_1, cv2.COLOR_BGR2RGB)
+    image_2_rgb = cv2.cvtColor(image_2, cv2.COLOR_BGR2RGB)
+    
+    # Sort matches to represent the closest ones in order
+    matches = sorted(matches, key = lambda x:x.distance)
+    
+    # Create image with matches using OpenCV drawMatches
+    matched_img = cv2.drawMatches(image_1_rgb, keypoints_1,
+                                  image_2_rgb, keypoints_2, matches[:num_matches],
+                                  image_2_rgb, flags=2)
+    
+    
+    # Plot image
+    plt.figure(figsize=figsize)
+    plt.imshow(matched_img, cmap='gray')
+    plt.title("SIFT matches")
+    plt.axis('off')
+    plt.show()
