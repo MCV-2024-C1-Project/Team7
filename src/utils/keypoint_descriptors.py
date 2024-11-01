@@ -34,7 +34,7 @@ def get_SIFT_key_des(image):
 # Harris Corner Detector
 # =========================================================
 
-def get_Harris_key_des(image, block_size=2, ksize=3, k=0.04, threshold=0.01):
+def get_Harris_key(image, block_size=2, ksize=3, k=0.04, threshold=0.01):
     """
     Detects keypoints in the given image using the Harris Corner Detector.
 
