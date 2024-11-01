@@ -31,6 +31,46 @@ def get_SIFT_key_des(image):
     
     return keypoints, descriptors
 
+# Harris Corner Detector
+# =========================================================
+
+def get_Harris_key_des(image, block_size=2, ksize=3, k=0.04, threshold=0.01):
+    """
+    Detects keypoints in the given image using the Harris Corner Detector.
+
+    Args:
+    - image (ndarray): a loaded, untransformed image.
+    - block_size (int): size of the neighborhood considered for corner detection.
+    - ksize (int): aperture parameter of the Sobel derivative.
+    - k (float): Harris detector free parameter in the equation.
+    - threshold (float): threshold to identify strong corners, as a fraction of
+                         the maximum corner response.
+
+    Returns:
+    - keypoints (list): list of OpenCV keypoints for compatibility with other functions.
+    """
+    
+    # Convert the image to grayscale
+    grayscale_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+    # Perform Harris corner detection
+    harris_response = cv2.cornerHarris(grayscale_image, block_size, ksize, k)
+    
+    # TODO (optional, just for visualization)
+    # Uncomment this code to dilate so that the corners are more clearly marked
+    # harris_response = cv2.dilate(harris_response, None)
+    
+    # Get keypoints above the threshold
+    keypoints = []
+    threshold_value = threshold * harris_response.max()
+    for y in range(harris_response.shape[0]):
+        for x in range(harris_response.shape[1]):
+            if harris_response[y, x] > threshold_value:
+                keypoints.append(cv2.KeyPoint(x, y, 1))
+    
+    return keypoints
+
+
 def get_SIFT_key_des_multi_image(images_list):
     """
     Given a list of loaded images, detects their keypoints using the SIFT
@@ -112,6 +152,31 @@ def draw_SIFT_keypoints(image, keypoints, figsize=(5,5)):
     plt.title("SIFT Keypoints")
     plt.axis('off')
     plt.show()
+
+
+def draw_Harris_keypoints(image, keypoints, figsize=(5,5)):
+    """
+    Draws Harris keypoints on the image for visualization.
+
+    Args:
+    - image (ndarray): loaded image to plot (in BGR)
+    - keypoints: list of keypoints for the image found using Harris detector.
+    - figsize (tuple): tuple of two ints determine the figure size.
+    """
+    
+    # Convert color space to RGB for visualization
+    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    
+    # Draw keypoints
+    image_with_keypoints = cv2.drawKeypoints(image_rgb, keypoints, None, color=(0, 255, 0))
+    
+    # Display the result using matplotlib
+    plt.figure(figsize=figsize)
+    plt.imshow(image_with_keypoints)
+    plt.title("Harris Keypoints")
+    plt.axis('off')
+    plt.show()
+
 
 def draw_SIFT_matches(image_1, image_2, keypoints_1, keypoints_2, matches, num_matches, figsize=(7,7)):
     """
