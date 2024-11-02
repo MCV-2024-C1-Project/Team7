@@ -150,6 +150,28 @@ def draw_SIFT_matches(image_1, image_2, keypoints_1, keypoints_2, matches, num_m
 # ORB (FAST + BRIEF)
 # =========================================================
 
+def get_ORB_keypoints(image):
+
+    grayscale_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+    orb = cv2.ORB_create()
+
+    keypoints = orb.detect(grayscale_image, None)
+
+    return keypoints
+
+
+def get_ORB_descriptors(image, keypoints):
+
+    grayscale_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+    orb = cv2.ORB_create()
+
+    keypoints_ret, descriptors = orb.compute(grayscale_image, keypoints)
+
+    return descriptors
+
+
 def get_ORB_key_des(image):
     """
     Detects the keypoints in the given image using the ORB detector
@@ -161,9 +183,9 @@ def get_ORB_key_des(image):
     Returns:
     - keypoints: the detected keypoints in the image (special structure
                  containing many attributes, see OpenCV doc.)
-    - features (ndarray): list of the ORB descriptors, each being 128
-                          dimensions. There are as many descriptors as
-                          keypoints detected.
+    - features (ndarray): list of the ORB descriptors.
+                        There are as many descriptors as
+                        keypoints detected.
     """
     
     # Transform to grayscale
