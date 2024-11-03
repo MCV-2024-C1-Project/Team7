@@ -1,4 +1,5 @@
 import cv2
+from tqdm import tqdm
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from skimage.feature import daisy
@@ -237,7 +238,7 @@ def get_GLOH_descriptors(image, keypoints, n_components=128):
 
 # AKAZE 
 
-def get_AKAZE_keypoints_descriptors(image):
+def get_AKAZE_key_des(image):
     """
     Detects keypoints and computes descriptors in the given image using the AKAZE (Accelerated-KAZE) algorithm.
     
@@ -251,6 +252,7 @@ def get_AKAZE_keypoints_descriptors(image):
     grayscale_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     akaze = cv2.AKAZE_create()
+
     keypoints, descriptors = akaze.detectAndCompute(grayscale_image, None)
 
     return keypoints, descriptors
@@ -418,9 +420,71 @@ def get_SIFT_key_des_multi_image(images_list):
     # Save the keypoints and descriptors in a list
     key_des_list = []
     
-    for image in images_list:
+    for image in tqdm(images_list, desc="Extracting keypoints and descriptors"):
         # Get the keypoints and descriptors for each image
         keypoints, descriptors = get_SIFT_key_des(image)
+        
+        # Save them in a dictionary
+        image_key_des = {}
+        image_key_des['keypoints'] = keypoints
+        image_key_des['descriptors'] = descriptors
+        
+        # Save the dictionary in the general list of keypoints and descriptors
+        key_des_list.append(image_key_des)
+        
+    return key_des_list
+
+def get_ORB_key_des_multi_image(images_list):
+    """
+    Given a list of loaded images, detects their keypoints using the ORB
+    detector and calculates their corresponding ORB descriptors.
+    
+    Args:
+    - images_list (list of ndarrays): list of loaded images.
+    
+    Returns:
+    - key_des_list (list of dictionaries): list of dictionaries, each
+                    dictionary containing the keypoints and descriptors
+                    for each image.
+    """
+    
+    # Save the keypoints and descriptors in a list
+    key_des_list = []
+    
+    for image in tqdm(images_list, desc="Extracting keypoints and descriptors"):
+        # Get the keypoints and descriptors for each image
+        keypoints, descriptors = get_ORB_key_des(image)
+        
+        # Save them in a dictionary
+        image_key_des = {}
+        image_key_des['keypoints'] = keypoints
+        image_key_des['descriptors'] = descriptors
+        
+        # Save the dictionary in the general list of keypoints and descriptors
+        key_des_list.append(image_key_des)
+        
+    return key_des_list
+
+def get_AKAZE_key_des_multi_image(images_list):
+    """
+    Given a list of loaded images, detects their keypoints using the AKAZE
+    detector and calculates their corresponding AKAZE descriptors.
+    
+    Args:
+    - images_list (list of ndarrays): list of loaded images.
+    
+    Returns:
+    - key_des_list (list of dictionaries): list of dictionaries, each
+                    dictionary containing the keypoints and descriptors
+                    for each image.
+    """
+    
+    # Save the keypoints and descriptors in a list
+    key_des_list = []
+    
+    for image in tqdm(images_list, desc="Extracting keypoints and descriptors"):
+        # Get the keypoints and descriptors for each image
+        keypoints, descriptors = get_AKAZE_key_des(image)
         
         # Save them in a dictionary
         image_key_des = {}
