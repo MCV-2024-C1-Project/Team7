@@ -168,7 +168,7 @@ def get_ORB_descriptors(image, keypoints):
     
     orb = cv2.ORB_create()
 
-    keypoints_ret, descriptors = orb.compute(grayscale_image, keypoints)
+    _, descriptors = orb.compute(grayscale_image, keypoints)
 
     return descriptors
 
@@ -496,13 +496,13 @@ def get_AKAZE_key_des_multi_image(images_list):
         
     return key_des_list
 
-def get_key_des_multi_image(image_paths, key_function, des_function):
+def get_key_des_wildcard_multi_image(images, key_function, des_function):
     """
     Given a list of image file paths, loads each image, detects its keypoints, 
     and calculates its descriptors using the specified keypoint and descriptor function.
     
     Args:
-    - image_paths (list of str): List of paths to the image files.
+    - image_paths (list of images): List images.
     - key_function (function): Function to detect keypoints.
     - des_function (function): Function to compute descriptors.
     
@@ -514,22 +514,14 @@ def get_key_des_multi_image(image_paths, key_function, des_function):
     # List to store the keypoints and descriptors for each image
     key_des_list = []
     
-    for image_path in image_paths:
-        # Load the image
-        image = cv2.imread(image_path)
-        
-        # Check if the image was loaded correctly
-        if image is None:
-            print(f"Warning: Could not load image at path: {image_path}")
-            continue
-        
+    for image in images:
+
         # Get keypoints and descriptors for the image
         keypoints = key_function(image)
-        descriptors =  des_function(image)
+        descriptors =  des_function(image, keypoints)
         
         # Save them in a dictionary
         image_key_des = {
-            'image_path': image_path,
             'keypoints': keypoints,
             'descriptors': descriptors
         }

@@ -43,22 +43,22 @@ def get_key_des_multi_image(images_list, method):
         key_des_list = get_AKAZE_key_des_multi_image(images_list)
         
     elif method=="Harris-SIFT":
-        key_des_list = get_key_des_multi_image(images_list, get_Harris_key, get_SIFT_descriptors)
+        key_des_list = get_key_des_wildcard_multi_image(images_list, get_Harris_key, get_SIFT_descriptors)
     
     elif method=="Harris-ORB":
-        key_des_list = get_key_des_multi_image(images_list, get_Harris_key, get_ORB_descriptors)
+        key_des_list = get_key_des_wildcard_multi_image(images_list, get_Harris_key, get_ORB_descriptors)
 
     elif method=="Harris-AKAZE":
-        key_des_list = get_key_des_multi_image(images_list, get_Harris_key, get_AKAZE_descriptors)
+        key_des_list = get_key_des_wildcard_multi_image(images_list, get_Harris_key, get_AKAZE_descriptors)
     
     elif method=="HarrisLaplacian-SIFT":
-        key_des_list = get_key_des_multi_image(images_list, get_Harris_Laplacian_keypoints, get_SIFT_descriptors)
+        key_des_list = get_key_des_wildcard_multi_image(images_list, get_Harris_Laplacian_keypoints, get_SIFT_descriptors)
     
     elif method=="HarrisLaplacian-ORB":
-        key_des_list = get_key_des_multi_image(images_list, get_Harris_Laplacian_keypoints, get_ORB_descriptors)
+        key_des_list = get_key_des_wildcard_multi_image(images_list, get_Harris_Laplacian_keypoints, get_ORB_descriptors)
     
     elif method=="HarrisLaplacian-AKAZE":
-        key_des_list = get_key_des_multi_image(images_list, get_Harris_Laplacian_keypoints, get_AKAZE_descriptors)
+        key_des_list = get_key_des_wildcard_multi_image(images_list, get_Harris_Laplacian_keypoints, get_AKAZE_descriptors)
     
     return key_des_list
 
