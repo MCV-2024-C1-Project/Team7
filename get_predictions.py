@@ -83,18 +83,18 @@ def get_num_matching_descriptors(descriptors_image_1, descriptors_image_2, metho
             Additional parameters depending on the method:
             - For "BruteForce":
                 params[0]: int
-                    Norm type (cv2.NORM_L2 for SIFT, cv2.NORM_HAMMING for ORB/AKAZE).
+                    Norm type (default: cv2.NORM_L2 for SIFT, cv2.NORM_HAMMING for ORB/AKAZE).
                 params[1]: bool
-                    Whether to use crossCheck.
+                    Whether to use crossCheck (default = False).
             - For "FLANN":
                 params[0]: dict
                     Index parameters.
                 params[1]: dict
                     Search parameters.
                 params[2]: int
-                    Number of nearest neighbors (k).
+                    Number of nearest neighbors (k) (default: 5).
                 params[3]: float
-                    Lowe's ratio for filtering matches.
+                    Lowe's ratio for filtering matches (default: 0.7).
 
     Returns:
         tuple:
