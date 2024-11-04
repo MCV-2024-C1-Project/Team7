@@ -10,6 +10,13 @@ from src.utils.denoising import create_denoised_dataset
 from src.utils.segmentation import generate_masks
 from src.utils.keypoint_descriptors import *
 
+def lowe_ratio_test (knn_matches, ratio_threshold):
+    good_matches = []
+    for m,n in knn_matches:
+        if m.distance < ratio_threshold * n.distance:
+            good_matches.append(m)
+    
+    return good_matches
 
 def get_key_des_multi_image(images_list, method):
     """
@@ -55,26 +62,106 @@ def get_key_des_multi_image(images_list, method):
     
     return key_des_list
 
-def get_num_matching_descriptors(descriptors_image_1, descriptors_image_2, method, params=[]):
+def get_num_matching_descriptors(descriptors_image_1, descriptors_image_2, method, descr_method, params=[]):
+    """
+    Matches descriptors between two images using either Brute-Force or FLANN-based matching.
 
+    Parameters:
+        descriptors_image_1: ndarray
+            Descriptors from the first image.
+        descriptors_image_2: ndarray
+            Descriptors from the second image.
+        method: str
+            Matching method to use. Options:
+            - "BruteForce": Uses Brute-Force matcher.
+            - "FLANN": Uses FLANN-based matcher.
+        descr_method: str
+            Descriptor method used for extracting features. Options:
+            - "SIFT": Uses floating-point descriptors.
+            - "ORB", "AKAZE": Use binary descriptors.
+        params: list, optional
+            Additional parameters depending on the method:
+            - For "BruteForce":
+                params[0]: int
+                    Norm type (cv2.NORM_L2 for SIFT, cv2.NORM_HAMMING for ORB/AKAZE).
+                params[1]: bool
+                    Whether to use crossCheck.
+            - For "FLANN":
+                params[0]: dict
+                    Index parameters.
+                params[1]: dict
+                    Search parameters.
+                params[2]: int
+                    Number of nearest neighbors (k).
+                params[3]: float
+                    Lowe's ratio for filtering matches.
+
+    Returns:
+        tuple:
+            matches: list
+                List of matched descriptors.
+            num_matches: int
+                The number of matches found.
+
+    Notes:
+        - BruteForce:
+            - Uses Euclidean distance for SIFT.
+            - Uses Hamming distance for ORB and AKAZE.
+        - FLANN:
+            - Uses KDTree for SIFT.
+            - Uses LSH for ORB and AKAZE.
+        - Applies Lowe's ratio test for FLANN-based matches.
+    """
     if method == "BruteForce":
-        if params:
-            norm = params[0]
-            crossCheck = params[1]
-        else:
-            norm = cv2.NORM_L1
-            crossCheck = False
+        if descr_method == "SIFT":
+            if params:
+                norm = params[0]
+                crossCheck = params[1]
+            else:
+                norm = cv2.NORM_L2
+                crossCheck = False
+
+        elif descr_method in ["ORB","AKAZE"]:
+            if params:
+                norm = params[0]
+                crossCheck = params[1]
+            else:
+                norm = cv2.NORM_HAMMING
+                crossCheck = False
 
         matcher = cv2.BFMatcher(norm, crossCheck)
         matches = matcher.match(descriptors_image_1, descriptors_image_2)
         num_matches = len(matches)
 
     elif method == "FLANN":
-        if params:
-            pass
-        else:
-            pass
-    
+        if descr_method == "SIFT":
+            if params:
+                index_params = params[0]
+                search_params = params[1]
+                k = params[2]
+                ratio = params[3]
+            else:
+                index_params = dict(algorithm=1, trees=5)
+                search_params = dict(checks=50)
+                k = 5
+                ratio = 0.7
+
+        elif descr_method in ["ORB","AKAZE"]:
+            if params:
+                index_params = params[0]
+                search_params = params[1]
+                k = params[2]
+                ratio = params[3]
+            else:
+                index_params = dict(algorithm=6, table_number=6, key_size=12, multi_probe_level=1)
+                search_params = dict(checks=50)
+                k = 5
+                ratio = 0.7
+        
+        matcher = cv2.FlannBasedMatcher(index_params, search_params)
+        knn_matches = matcher.knnMatch(descriptors_image_1, descriptors_image_2, k)
+        matches = lowe_ratio_test(knn_matches, ratio)
+        num_matches = len(matches)
 
     return matches, num_matches
 
