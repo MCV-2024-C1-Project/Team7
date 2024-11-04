@@ -8,7 +8,7 @@ import pickle
 from src.utils.images import load_images_from_directory
 from src.utils.denoising import create_denoised_dataset
 from src.utils.segmentation import generate_masks
-from src.utils.keypoint_descriptors import get_SIFT_key_des_multi_image, get_ORB_key_des_multi_image, get_AKAZE_key_des_multi_image
+from src.utils.keypoint_descriptors import *
 
 
 def get_key_des_multi_image(images_list, method):
@@ -36,27 +36,47 @@ def get_key_des_multi_image(images_list, method):
         key_des_list = get_AKAZE_key_des_multi_image(images_list)
         
     elif method=="Harris-SIFT":
-        pass
+        key_des_list = get_key_des_multi_image(images_list, get_Harris_key, get_SIFT_descriptors)
     
     elif method=="Harris-ORB":
-        pass
+        key_des_list = get_key_des_multi_image(images_list, get_Harris_key, get_ORB_descriptors)
 
     elif method=="Harris-AKAZE":
-        pass
+        key_des_list = get_key_des_multi_image(images_list, get_Harris_key, get_AKAZE_descriptors)
     
     elif method=="HarrisLaplacian-SIFT":
-        pass
+        key_des_list = get_key_des_multi_image(images_list, get_Harris_Laplacian_keypoints, get_SIFT_descriptors)
     
     elif method=="HarrisLaplacian-ORB":
-        pass
+        key_des_list = get_key_des_multi_image(images_list, get_Harris_Laplacian_keypoints, get_ORB_descriptors)
     
     elif method=="HarrisLaplacian-AKAZE":
-        pass
+        key_des_list = get_key_des_multi_image(images_list, get_Harris_Laplacian_keypoints, get_AKAZE_descriptors)
     
     return key_des_list
 
-def get_num_matching_descriptors(descriptors_image_1, descriptors_image_2):
-    pass
+def get_num_matching_descriptors(descriptors_image_1, descriptors_image_2, method, params=[]):
+
+    if method == "BruteForce":
+        if params:
+            norm = params[0]
+            crossCheck = params[1]
+        else:
+            norm = cv2.NORM_L1
+            crossCheck = False
+
+        matcher = cv2.BFMatcher(norm, crossCheck)
+        matches = matcher.match(descriptors_image_1, descriptors_image_2)
+        num_matches = len(matches)
+
+    elif method == "FLANN":
+        if params:
+            pass
+        else:
+            pass
+    
+
+    return matches, num_matches
 
 
 def check_for_unknown_painting(num_matching_descriptors, unknown_painting_threshold):
