@@ -166,8 +166,12 @@ def get_num_matching_descriptors(descriptors_image_1, descriptors_image_2, metho
     return matches, num_matches
 
 
-def check_for_unknown_painting(num_matching_descriptors, unknown_painting_threshold):
-    return False
+def check_for_unknown_painting(num_matching_descriptors_list, unknown_painting_threshold):
+    max_matches = max(num_matching_descriptors_list)
+    num_matching_descriptors_list.remove(max_matches)
+    second_max_matches = max(num_matching_descriptors_list)
+    ratio = second_max_matches / max_matches
+    return ratio > unknown_painting_threshold
 
 
 def get_predictions(query_dir, bbdd_dir, method, matching_method, matching_params=[], unknown_painting_threshold=2,
