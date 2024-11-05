@@ -489,7 +489,7 @@ def get_unknowns_f1(submission, ground_truth):
     """
     
     submission_binary = [1 if sublist[0] == -1 else 0 for sublist in submission]
-    groundtruth_binary = [1 if sublist[0] == -1 else 0 for sublist in gt]
+    groundtruth_binary = [1 if sublist[0] == -1 else 0 for sublist in ground_truth]
 
     f1 = f1_score(groundtruth_binary, submission_binary)
     
