@@ -4,6 +4,7 @@ import numpy as np
 import shutil
 import tqdm as tqdm
 import pickle
+import time
 
 from src.utils.images import load_images_from_directory
 from src.utils.denoising import create_denoised_dataset
@@ -17,6 +18,31 @@ def lowe_ratio_test (knn_matches, ratio_threshold):
             good_matches.append(m)
     
     return good_matches
+
+
+def function_time_count(function, params):
+
+    """
+    Measures the execution time of a given function and returns both the 
+    time taken and the function's result.
+
+    Args:
+        function (callable): The function to be executed.
+        params (list): A tuple of parameters to pass to the function.
+
+    Returns:
+    - tuple: A tuple containing:
+        - total_time (float): The time taken to execute the function, in seconds.
+        - results: The output of the executed function.
+    """
+
+    start = time.time()
+    results = function(*params)
+    end = time.time()
+    total_time = end-start
+
+    return total_time, results
+
 
 def get_key_des_multi_image(images_list, method):
     """
@@ -97,19 +123,19 @@ def get_num_matching_descriptors(descriptors_image_1, descriptors_image_2, metho
                     Lowe's ratio for filtering matches (default: 0.7).
 
     Returns:
-        tuple:
-            matches: list
-                List of matched descriptors.
-            num_matches: int
-                The number of matches found.
+    - tuple:
+        - matches: list
+            List of matched descriptors.
+        - num_matches: int
+            The number of matches found.
 
     Notes:
-        - BruteForce:
-            - Uses Euclidean distance for SIFT.
-            - Uses Hamming distance for ORB and AKAZE.
-        - FLANN:
-            - Uses KDTree for SIFT.
-            - Uses LSH for ORB and AKAZE.
+    - BruteForce:
+        - Uses Euclidean distance for SIFT.
+        - Uses Hamming distance for ORB and AKAZE.
+    - FLANN:
+        - Uses KDTree for SIFT.
+        - Uses LSH for ORB and AKAZE.
         - Applies Lowe's ratio test for FLANN-based matches.
     """
     if method == "BruteForce":
