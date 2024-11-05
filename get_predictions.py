@@ -15,9 +15,6 @@ def lowe_ratio_test (knn_matches, ratio_threshold):
 
     """
     Applies Lowe's ratio test to filter out poor matches from k-nearest neighbors (k-NN) match results.
-    
-    This function is commonly used in computer vision tasks like feature matching,
-    particularly in algorithms such as SIFT (Scale-Invariant Feature Transform).
 
     Args:
         knn_matches (list of tuples): A list of tuples where each tuple contains two matches (m, n).
@@ -212,16 +209,54 @@ def get_num_matching_descriptors(descriptors_image_1, descriptors_image_2, metho
 
 
 def check_for_unknown_painting(num_matching_descriptors_list, unknown_painting_threshold):
+    """
+    Determines whether an unknown painting is present by analyzing the ratio of matching descriptors.
+
+    Args:
+        num_matching_descriptors_list (list of int): A list containing the number of matching 
+            descriptors for each known painting.
+        unknown_painting_threshold (float): The threshold ratio used to determine if the painting 
+            is unknown. If the ratio of the second highest to the highest number of matches exceeds 
+            this threshold, the painting is considered unknown.
+
+    Returns:
+        bool: True if the painting is determined to be unknown, False otherwise.
+    """
+
     max_matches = max(num_matching_descriptors_list)
     num_matching_descriptors_list.remove(max_matches)
     second_max_matches = max(num_matching_descriptors_list)
     ratio = second_max_matches / max_matches
+
     return ratio > unknown_painting_threshold
 
 
 def get_predictions(query_dir, bbdd_dir, method, matching_method, matching_params=[], unknown_painting_threshold=2,
                     cache_segmented=False, cache_denoised=False):
-    
+    """
+    Processes query images to identify paintings by matching their features against a database (BBDD),
+    using specified image processing and matching methods.
+
+    This function involves several steps: denoising, segmentation, feature extraction, and descriptor 
+    matching. The process is optimized with optional caching for segmentation and denoising.
+
+    Args:
+        query_dir (str): Path to the directory containing query images.
+        bbdd_dir (str): Path to the directory containing database (BBDD) images.
+        method (str): Method used for extracting keypoints and descriptors (e.g., SIFT, ORB).
+        matching_method (str): Method used for matching descriptors (e.g., brute-force, FLANN).
+        matching_params (list, optional): Additional parameters for the matching method.
+        unknown_painting_threshold (float, optional): Threshold for determining if a painting is unknown.
+            Default is 2.
+        cache_segmented (bool, optional): If True, uses cached segmented images. Default is False.
+        cache_denoised (bool, optional): If True, uses cached denoised images. Default is False.
+
+    Returns:
+        list: A list of results for each query image. Each result is either:
+            - A list of indices representing the best matches from the database (sorted by similarity).
+            - [-1] if the painting is determined to be unknown.
+    """
+        
     if cache_segmented:
         print("Using cached segmented images.")
         
