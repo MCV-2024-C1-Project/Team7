@@ -12,6 +12,25 @@ from src.utils.segmentation import generate_masks
 from src.utils.keypoint_descriptors import *
 
 def lowe_ratio_test (knn_matches, ratio_threshold):
+
+    """
+    Applies Lowe's ratio test to filter out poor matches from k-nearest neighbors (k-NN) match results.
+    
+    This function is commonly used in computer vision tasks like feature matching,
+    particularly in algorithms such as SIFT (Scale-Invariant Feature Transform).
+
+    Args:
+        knn_matches (list of tuples): A list of tuples where each tuple contains two matches (m, n).
+            - `m` and `n` are typically objects with a `distance` attribute, representing the 
+              distance between matched features.
+        ratio_threshold (float): The threshold ratio to determine if a match is good. A smaller 
+            ratio is more strict and filters out more matches.
+
+    Returns:
+        list: A list of good matches that pass Lowe's ratio test. Each match in the list is from 
+        the first element of the tuple `m` in `knn_matches` that satisfies the ratio test.
+    """
+        
     good_matches = []
     for m,n in knn_matches:
         if m.distance < ratio_threshold * n.distance:
