@@ -167,10 +167,10 @@ def get_num_matching_descriptors(descriptors_image_1, descriptors_image_2, metho
 
 
 def check_for_unknown_painting(num_matching_descriptors, unknown_painting_threshold):
-    pass
+    return False
 
 
-def get_predictions(query_dir, bbdd_dir, method, matching_method, unknown_painting_threshold):
+def get_predictions(query_dir, bbdd_dir, method, matching_method, matching_params=[], unknown_painting_threshold=1):
     
     # REMOVE NOISE FROM QUERY IMAGES FOR SEGMENTATION
     # ======================================================================================
@@ -235,7 +235,7 @@ def get_predictions(query_dir, bbdd_dir, method, matching_method, unknown_painti
     paintings_per_image = []
     image_counter = 0
 
-    for i, mask in enumerate(tqdm.tqdm(masks, desc="Generating segmentation masks and cropping images")):
+    for i, mask in enumerate(tqdm(masks, desc="Generating segmentation masks and cropping images")):
         # Save the mask
         mask_filename = f"{i:05d}.png"
         masks_save_path = os.path.join(masks_queries_dir, mask_filename)
@@ -316,6 +316,7 @@ def get_predictions(query_dir, bbdd_dir, method, matching_method, unknown_painti
     query_key_des_list = get_key_des_multi_image(query_images, method)
     bbdd_key_des_list = get_key_des_multi_image(bbdd_images, method)
     
+    # return query_key_des_list, bbdd_key_des_list
     
     # GET PREDICTIONS USING MATCHING DESCRIPTORS
     # =======================================================================================
@@ -324,13 +325,22 @@ def get_predictions(query_dir, bbdd_dir, method, matching_method, unknown_painti
     results = []
     
     # For each query
-    for query_image in query_key_des_list:
+    for query_image in tqdm(query_key_des_list, desc="Matching descriptors"):
         
         # Get matching descriptors from each bbdd image
         num_matching_descriptors_list = []
         for bbdd_image in bbdd_key_des_list:
             
-            num_matching_descriptors = get_num_matching_descriptors(query_image['descriptors'], bbdd_image['descriptors'])
+            # There must be at least one descriptor
+            if str(bbdd_image['descriptors'])!="None":
+                _, num_matching_descriptors = get_num_matching_descriptors(query_image['descriptors'],
+                                                                           bbdd_image['descriptors'],
+                                                                           method=matching_method,
+                                                                           descr_method=method,
+                                                                           params=matching_params)
+            else:
+                num_matching_descriptors = 0
+                
             num_matching_descriptors_list.append(num_matching_descriptors)
             
         # Check if the query is an unknown painting
@@ -342,14 +352,18 @@ def get_predictions(query_dir, bbdd_dir, method, matching_method, unknown_painti
         
         else:
             # Append sorted list of predictions if painting is known
-            results.append(np.argsort(num_matching_descriptors))
+            results.append(np.argsort(num_matching_descriptors_list)[::-1])
     
     return results
 
-
 # Example usage
 """
-query_dir = "./data/qsd1_w4/"
+query_dir = "./data/qsd1_w3/non_augmented/"
 bbdd_dir = "./data/BBDD/"
-get_predictions(query_dir, bbdd_dir, method="ORB", matching_method=None, unknown_painting_threshold=None)
+
+results = get_predictions(query_dir, bbdd_dir,
+                          method="ORB",
+                          matching_method="BruteForce",
+                          matching_params=[cv2.NORM_HAMMING, True],
+                          unknown_painting_threshold=None)
 """
