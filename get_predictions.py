@@ -5,6 +5,7 @@ import shutil
 import tqdm as tqdm
 import pickle
 import time
+from sklearn.metrics import f1_score
 
 from src.utils.images import load_images_from_directory
 from src.utils.denoising import create_denoised_dataset
@@ -449,7 +450,52 @@ def get_predictions(query_dir, bbdd_dir, method, matching_method, matching_param
     
     return results
 
-# Example usage
+def generate_submission(results, paintings_per_image):
+    """
+    Gets the top 1 bbdd image for each query, taking into account
+    whether there were one or two paintings in the image.
+    
+    Args:
+    - results: list of lists with the ordered top results for each query
+    - paintings_per_image: list with number of paintings in every query image
+    
+    Returns:
+    - submission: a list of lists in the sumbission format
+    """
+    
+    submission = []
+    i = 0
+    for num_paintings in paintings_per_image:
+        if num_paintings == 1:
+            submission.append([results[i][0]])
+            i += 1
+        elif num_paintings == 2:
+            submission.append([results[i][0], results[i+1][0]])
+            i += 2
+            
+    return submission
+    
+def get_unknowns_f1(submission, ground_truth):
+    """
+    Calculates the f1 score considering only the predictions regarding
+    the unknown paintings.
+    
+    Args:
+    - submission: results in the submission format.
+    - ground_truth: groundtruth in the W4 format.
+    
+    Returns:
+    - f1: f1 score regarding the unknown paintings predictions
+    """
+    
+    submission_binary = [1 if sublist[0] == -1 else 0 for sublist in submission]
+    groundtruth_binary = [1 if sublist[0] == -1 else 0 for sublist in gt]
+
+    f1 = f1_score(groundtruth_binary, submission_binary)
+    
+    return f1
+
+# Generating results example usage
 """
 query_dir = "./data/qsd1_w3/non_augmented/"
 bbdd_dir = "./data/BBDD/"
@@ -461,4 +507,17 @@ results = get_predictions(query_dir, bbdd_dir,
                           unknown_painting_threshold=2,
                           cache_segmented=True,
                           cache_denoised=True)
+"""
+
+# Getting f1 example usage                       
+"""
+with open('./data/qsd1_w4/gt_corresps.pkl', 'rb') as f:
+    ground_truth = pickle.load(f)
+    
+with open("data/paintings_per_image.pkl", "rb") as f:
+    paintings_per_image = pickle.load(f)
+    
+submission = generate_submission(results, paintings_per_image)
+f1 = get_unknowns_f1(submission, ground_truth)
+print(f1)
 """
