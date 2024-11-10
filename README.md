@@ -253,7 +253,7 @@ In summary, while noise does degrade the retrieval system’s performance, its i
 
 In Task 4 we must generate and submit the results for a "blind" competition using our final retrieval system.
 
-% TODO MENTION WHICH FILES WE USED TO GENERATE THE SUBMISSION
+To generate the submission, it is only necessary to execute the `generate_submission.py` script as specified at the beggining. This script is already configured with the best methods and parameters, so it is only necessary to specify the image folders.
 
 <h2 id="files-in-this-project">📂 Files in this project</h2>
 
