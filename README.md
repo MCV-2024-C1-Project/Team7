@@ -64,6 +64,7 @@ This week, the retrieval of the paintings must be done using keypoint detectors 
 4. Study of how the **noise** can affect the performance of the keypoint detection and local description matching methods.
 
 ### Task 1
+
 This task consists of the implementation of the keypoint detection and local description methods.
 
 #### Testing of the different keypoint detection and local description methods and study of the different matching methods for the descriptors
@@ -93,16 +94,11 @@ The performance of each combination was evaluated using mean average precision a
 
 This task is divided into three sub-tasks. In this section, we describe the task and present our solutions.
 
----
-
 1. **Tentative Match Identification and Verification:**
 
 The first part of Task 2 involves identifying matches between image keypoints, based on the similarity of their descriptors.
 
----
-
 **Matching Methods Explored**
-
 To identify matching features across images, we explored and tested two main descriptor-matching methods:
 
 - **Brute Force (BF) Matching**: This method compares each descriptor from the query image against all descriptors in the reference image. We used OpenCV’s BFMatcher, with the distance metric:
@@ -113,19 +109,12 @@ To identify matching features across images, we explored and tested two main des
     - **For SIFT**: k-d Tree, recursively dividing the space, finding approximate matches in 𝑂(log(𝑛)).
     - **For ORB and AKAZE**: LSH (Locality Sensitive Hashing) binary descriptors, organizing descriptors into "groups" for more efficient matching than exhaustive search.
 
----
-
 **Key Insight**: FLANN produced fewer high-quality matches compared to Brute Force, particularly for ORB and AKAZE. This aligns with expectations and can be interpreted as FLANN matches being of “less quality”.
-
----
 
 **Performance Visualization:**
 ![Example of keypoint detection in salt-and-pepper noisy image](figs/matches_visu0.png)
 
----
-
 **Match Verification Methods**
-
 After detecting and matching the keypoints, we verified that they were good matches by implementing and testing two different methods: **Cross Check** (for Brute Force only), or **Lowe’s ratio** (for Brute Force or FLANN). These methods are explained next:
 
 - **Cross Check (only for Brute Force)**: The matches are checked bidirectionally: a match of two descriptors A and B is good only if B is the closest to A, and A is the closest to B. This was enabled by setting the `crossCheck` parameter to _True_ in the BFMatcher function. Cross Check significantly reduced matches, indicating stricter criteria for a match.
@@ -134,13 +123,9 @@ After detecting and matching the keypoints, we verified that they were good matc
 
 ![Example of keypoint detection in GT for the same image](figs/matches_visu.png)
 
----
 
 2. **Detecting Unknown Queries**
-
 The second part of Task 2 focuses on implementing a system to identify query images that do not match any reference image in the dataset (unknowns). This is essential for improving retrieval accuracy by preventing false matches to images outside the database.
-
----
 
 **Steps to detect an unknown painting**:
 
@@ -148,8 +133,6 @@ The second part of Task 2 focuses on implementing a system to identify query ima
 - **Step 2**: Compare the top 1 and top 2 number of matches by calculating the ratio between them: `top2/top1`.
 - **Step 3**: The ratio ranges from 0 to 1. The closer to 1, the more similar the number of matches between the top 1 and top 2, which means the system can’t clearly decide, which in turn likely means that the painting is unknown. Therefore, the ratio is tested against a predefined threshold.
 - **Step 4**: If the ratio is above the threshold, the painting is flagged as unknown ([-1]).
-
----
 
 **Threshold Optimization Study**:
 
@@ -163,8 +146,6 @@ The second part of Task 2 focuses on implementing a system to identify query ima
 
 - The F1 score is used to decide which of the 9,999 thresholds is best.
 
----
-
 **Study Results**:
 
 | Key-Des Method               | Best Threshold | F1 Score |
@@ -174,15 +155,11 @@ The second part of Task 2 focuses on implementing a system to identify query ima
 | AKAZE + BF + CrossCheck      | 0.8686         | 0.690    |
 | HarrisLap + BF + CrossCheck  | 0.8345         | 0.714    |
 
----
-
 **Observations About the Results**:
 
 - The best threshold does indeed change depending on the keypoint descriptor method used.
 - The F1 scores are also different for the different keypoint descriptor methods used, suggesting that some methods detect “more distinct” keypoints, easing the unknown painting detection. In this case, **ORB + FLANN + Lowe** would produce the most distinct ones.
 - We might expect even more dissimilar results for other descriptor matching and verification methods.
-
----
 
 3. **Performance Comparison of Descriptor Matching Methods**
 
@@ -194,11 +171,7 @@ To determine the best descriptor matching method, we compared the MAP@1 scores a
 - **AKAZE → FLANN** is 14.42x better in MAP@1, and 4.54x faster.
 - **Harris-Lap-ORB → Performance between BF and FLANN** is almost identical in terms of MAP scores (with no significant difference), but FLANN is still 1.05x faster.
 
----
-
 **Conclusion**: FLANN was generally the superior matching method in terms of both speed and accuracy, especially for ORB and AKAZE descriptors.
-
----
 
 **Comparative Analysis of FLANN Parameter Settings**
 
@@ -221,8 +194,6 @@ To further optimize FLANN’s performance, we evaluated various parameter settin
 - **Lowe Ratio**:
     - *Description*: Threshold ratio to filter out poor matches by comparing the two best match distances; lower values give stricter filtering for better matches.
     - *Effect*: Lowering the Lowe Ratio improved MAP@1 by approximately 0.04 with minimal impact on computation time, making it a particularly effective adjustment.
-
----
 
 **Optimal Parameter Configuration**
 
@@ -247,12 +218,9 @@ This study investigates how noise affects the performance of two keypoint detect
 2. **Noise Type in Dataset**: We used the qsd1_w3 dataset, which contains two types of synthetic noise:
     - **Salt-and-Pepper Noise**: Disrupts pixel intensities randomly, creating sharp, contrasting points.
 
-
     ![Example of salt-and-pepper noisy image](figs/sp_noisy.jpg) ![GT for the same image](figs/sp_gt.jpg)
 
-
     - **Color Noise**: Introduces subtle color shifts that can affect pixel values across different channels.
-
 
     ![Example of color alteration noisy image](figs/color_noisy.jpg) ![GT for the same image](figs/color_gt.jpg)
 
@@ -270,10 +238,8 @@ This study investigates how noise affects the performance of two keypoint detect
     ![Example of keypoint detection in color alteration noisy image](figs/Figure_1query_colornoise.png) ![Example of keypoint detection in GT for the same image](figs/Figure_1query_nonoise_2.png)
     ![Example 2 of keypoint detection in color alteration noisy image](figs/Figure_1query_noise0.png) ![Example 2 of keypoint detection in GT for the same image](figs/Figure_1query_nonoise0.png)
 
-
 - Bar plot:
 The bar plot compares the MAP@1 performance of AKAZE and ORB with the FLANN matching method, with separate bars for "No Noise" and "Noise".
-
 
 ![Bar plot of the results for "No Noise" and "Noise" images](figs/barplot_noise.png)
 
@@ -285,7 +251,6 @@ The bar plot compares the MAP@1 performance of AKAZE and ORB with the FLANN matc
     - Salt-and-Pepper Noise: Creates distortion in descriptors, reducing reliability as it disrupts the local structure needed for accurate matching.
     - Color Noise: No impact on descriptors, as ORB and AKAZE both rely on grayscale intensity rather than color data.
 - **Matching Process**:
-
     Noise disrupts both keypoint detection and descriptor accuracy, leading to a higher rate of mismatches.
 
 In summary, while noise does degrade the retrieval system’s performance, its impact is not severe for either method under the tested conditions, with ORB showing slightly more sensitivity to noise than AKAZE. The effect it has on MAP@1 for each method is:
@@ -296,5 +261,6 @@ In summary, while noise does degrade the retrieval system’s performance, its i
 
 In Task 4 we must generate and submit the results for a "blind" competition using our final retrieval system.
 
-% TODO EXPLAIN RELEVANT FILES
+<h2 id="files-in-this-project">📂 Files in this project</h2>
 
+% TODO EXPLAIN RELEVANT FILES
