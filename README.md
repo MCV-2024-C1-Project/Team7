@@ -264,7 +264,7 @@ The submission file is `generate_submission.py`, and can be executed as specifie
 The main function created this week, `get_prediction()`, can execute any of the 9 combinations of keypoint-descriptor methods explained earlier. This function can be found in the `get_prediction.py` file.
 
 #### Study files
-For the different **studies that have been performed, there are several notebooks available:
+For the different **studies** that have been performed, there are several notebooks available:
 - Model comparison study: `Keypoint descriptor methods general comparison.ipynb`
 - Comparison with last week & unknown painting system for DCT: `Comparison with last week & unknown system for DCT.ipynb`
 - Unknown painting detection and the optimization of the threshold: `Unknown painting detection threshold optimization.ipynb`
