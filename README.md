@@ -35,27 +35,16 @@ Even though different locations can be specified, in general the scripts assume 
 
 ### Run the main code
 
-% TODO EXPLAIN THIS WEEK'S FILES
+To generate the submissions for this week, **1 executable file** has been created: `generate_submission.py`.
 
-To generate the submissions for this week, **2 different executable files** have been created.
-
-1. For the predictions for the images without background (**QST1_W3**), please execute `generate_sumbission_cropped.py` as is indicated next. In this file, the best denoising and best texture methods have been used.
-
+This file executes the main function created (`get_predictions()`) with the best keypoint-descriptor combination as well as the best parameters. To execute this file, please do the following:
 ```
-python generate_submission_cropped.py \
---queries-dir "./data/qst1_w3/" \
+python generate_submission.py \
+--query-dir "./data/qst1_w4/" \
 --bbdd-dir "./data/BBDD/"
 ```
 
-2. For the predictions for the images with background (**QST2_W3**), as well as the corresponding masks, please execute `generate_submission_background.py` as is indicated next. In this file, the best denoising and best texture methods have been used, as well as a method to detect and extract the paintings present in each image.
-
-```
-python generate_submission_background.py \
---queries-dir "./data/qst2_w3/" \
---bbdd-dir "./data/BBDD/"
-```
-
-For more information on the methods used in these files, see the following sections.
+For more information on the methods used in this file, see the following sections.
 
 
 <h2 id="this-weeks-tasks">💡 This week's tasks</h2>
