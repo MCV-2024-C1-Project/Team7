@@ -261,6 +261,8 @@ In summary, while noise does degrade the retrieval system’s performance, its i
 
 In Task 4 we must generate and submit the results for a "blind" competition using our final retrieval system.
 
+% TODO MENTION WHICH FILES WE USED TO GENERATE THE SUBMISSION
+
 <h2 id="files-in-this-project">📂 Files in this project</h2>
 
 % TODO EXPLAIN RELEVANT FILES
