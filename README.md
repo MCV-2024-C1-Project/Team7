@@ -32,6 +32,8 @@ Even though different locations can be specified, in general the scripts assume 
 
 ### Run the main code
 
+% TODO EXPLAIN THIS WEEK'S FILES
+
 To generate the submissions for this week, **2 different executable files** have been created.
 
 1. For the predictions for the images without background (**QST1_W3**), please execute `generate_sumbission_cropped.py` as is indicated next. In this file, the best denoising and best texture methods have been used.
@@ -150,44 +152,9 @@ In summary, while noise does degrade the retrieval system’s performance, its i
 
 ### Task 4
 
+In Task 4 we must generate and submit the results for a "blind" competition using our final retrieval system.
 
-### Noise removal related files
-
-- `denoising.ipynb`: Notebook structured into three key sections:
-  - Noise Estimation: Analyzes methods to determine image noise levels, identifying the most effective of four approaches and the optimal threshold for it. Includes PR and ROC curve evaluations.
-  - Denoising Methods Exploration: Conducts an exploratory analysis of various denoising methods, including a grid search for optimal parameters per method. The study includes performance comparisons and visual results, covering Low Pass filters, combinations of Low Pass filters with Laplacian pyramid levels, Wavelet filters, and DCT filters.
-  - Denoised Dataset Generation: Provides a function to generate a denoised dataset using any implemented method with custom parameters and combinations, such as optional high-pass enhancement or applying denoising only when noise estimation exceeds a specified threshold.
-
-
-### Texture extraction related files
-
-For the DCT approach, there are 3 different files of interest:
-- `DCT_study.py`: executes the parameter grid and saves the results in a csv file.
-- `DCT study - results analysis.ipynb`: analyzes the results csv with plots and other calculations.
-- `DCT study - example visualization`: visually represents how the texture features of an example image are extracted, using the best variant of the DCT approach.
-- Other helper functions have been defined and distributed in different utils files, most notably in the `DCT.py` utils script.
-
-For the LBP approach, similarly to the DCT approach, there are 3 different files of interest:
-- `LBP_study.py`: executes the parameter grid and saves the results in a csv file.
-- `LBP study - results analysis.ipynb`: analyzes the results csv with plots and other calculations.
-- `LBP study - example visualization`: visually represents how the texture features of an example image are extracted, using the best variant of the DCT approach.
-- Other helper functions have been defined and distributed in different utils files, most notably in the `LBP.py` utils script.
-
-For the Wavelets approach theere are 3 files of interest:
--`apply_wavelet`: executes the parameter grid and saves the results in different csv files.
--`texture_descriptors_tries`: contains example images and basic filter using.
--`wavelet_and_gabor_results`: does a small analisis of the results obtained after applying the wavelet.
-
-For the Gabor filters approach theere are 3 files of interest:
--`apply_gabor_filters`: executes the parameter grid and saves the results in different csv files.
--`texture_descriptors_tries`: contains example images and basic filter using.
--`wavelet_and_gabor_results`: does a small analisis of the results obtained after applying the gabor filters.
-
-### Painting detection and background removal related files
-- `week3_crop_images.py`: this script processes all the query images in a directory according to the pipeline described in task 3. It returns the cropped images and the corresponding masks.
-- `segmentation_week3.ipynb`: this is the notebook where the tests for the segmentation task were developed.
-
-### Full pipeline related files
+% TODO EXPLAIN RELEVANT FILES
 
 The execution of all methods combined in a single pipeline happens in the `generate_submission_background.py` file, where the best approaches identified for image segmentation, noise removal and texture extraction have been used. This is also the file that generates the sumbission for the QST2_W3 dataset, as explained at the begginning of this report.
 
