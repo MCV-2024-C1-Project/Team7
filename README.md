@@ -257,4 +257,12 @@ To generate the submission, it is only necessary to execute the `generate_submis
 
 <h2 id="files-in-this-project">📂 Files in this project</h2>
 
-% TODO EXPLAIN RELEVANT FILES
+#### Submission file
+The submission file is `generate_submission.py`, and can be executed as specified at the beggining.
+
+#### Main function file
+The main function created this week, `get_prediction()`, can execute any of the 9 combinations of keypoint-descriptor methods explained earlier. This function can be found in the `get_prediction.py` file.
+
+#### Study files
+For the different studies that have been performed, there are several notebooks available:
+- Model comparison study: 
