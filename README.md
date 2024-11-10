@@ -268,5 +268,5 @@ For the different **studies** that have been performed, there are several notebo
 - Model comparison study: `Keypoint descriptor methods general comparison.ipynb`
 - Comparison with last week & unknown painting system for DCT: `Comparison with last week & unknown system for DCT.ipynb`
 - Unknown painting detection and the optimization of the threshold: `Unknown painting detection threshold optimization.ipynb`
-- System behaviour with the presence of noise.
+- System behaviour with the presence of noise: `Presence of noise study.ipynb`
 - Best matching descriptor algorithm study.
