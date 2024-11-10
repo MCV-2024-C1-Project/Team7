@@ -1,4 +1,7 @@
 # Master in Computer Vision, Module C1
+## Final presentation
+You can view the slides for this project's final presentation via this [link](https://docs.google.com/presentation/d/1nmIMdjG88srY2hJZFuT2wO06Ag9B39kvTH5pKnxS3F8/edit?usp=sharing).
+
 # Week 4
 [▶️ Code execution](#code-execution)
 
