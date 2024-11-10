@@ -156,7 +156,3 @@ In Task 4 we must generate and submit the results for a "blind" competition usin
 
 % TODO EXPLAIN RELEVANT FILES
 
-The execution of all methods combined in a single pipeline happens in the `generate_submission_background.py` file, where the best approaches identified for image segmentation, noise removal and texture extraction have been used. This is also the file that generates the sumbission for the QST2_W3 dataset, as explained at the begginning of this report.
-
-The pipeline for already cropped images, only using noise removal and feature extraction, is encapsulated in the `generate_submission_cropped.py` file. Again, this is also the file that generates the submission for the QST1_W3 dataset.
-
