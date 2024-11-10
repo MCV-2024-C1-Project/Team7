@@ -91,6 +91,148 @@ The performance of each combination was evaluated using mean average precision a
 
 ### Task 2
 
+This task is divided into three sub-tasks. In this section, we describe the task and present our solutions.
+
+---
+
+1. **Tentative Match Identification and Verification:**
+
+The first part of Task 2 involves identifying matches between image keypoints, based on the similarity of their descriptors.
+
+---
+
+**Matching Methods Explored**
+
+To identify matching features across images, we explored and tested two main descriptor-matching methods:
+
+- **Brute Force (BF) Matching**: This method compares each descriptor from the query image against all descriptors in the reference image. We used OpenCV’s BFMatcher, with the distance metric:
+    - **For SIFT**: Since SIFT descriptors are 128-dimensional float vectors, Euclidean distance is appropriate as it measures closeness in vector space.
+    - **For ORB and AKAZE**: Since these produce binary descriptors, Hamming distance is better suited as it is optimized for binary data comparisons.
+
+- **FLANN (Fast Library for Approximate Nearest Neighbors)**: This method is more efficient for large datasets and high-dimensional descriptors. We used OpenCV's FlannBasedMatcher, with the search methods:
+    - **For SIFT**: k-d Tree, recursively dividing the space, finding approximate matches in 𝑂(log(𝑛)).
+    - **For ORB and AKAZE**: LSH (Locality Sensitive Hashing) binary descriptors, organizing descriptors into "groups" for more efficient matching than exhaustive search.
+
+---
+
+**Key Insight**: FLANN produced fewer high-quality matches compared to Brute Force, particularly for ORB and AKAZE. This aligns with expectations and can be interpreted as FLANN matches being of “less quality”.
+
+---
+
+**Performance Visualization:**
+![Example of keypoint detection in salt-and-pepper noisy image](figs/matches_visu0.png)
+
+---
+
+**Match Verification Methods**
+
+After detecting and matching the keypoints, we verified that they were good matches by implementing and testing two different methods: **Cross Check** (for Brute Force only), or **Lowe’s ratio** (for Brute Force or FLANN). These methods are explained next:
+
+- **Cross Check (only for Brute Force)**: The matches are checked bidirectionally: a match of two descriptors A and B is good only if B is the closest to A, and A is the closest to B. This was enabled by setting the `crossCheck` parameter to _True_ in the BFMatcher function. Cross Check significantly reduced matches, indicating stricter criteria for a match.
+
+- **Lowe’s Ratio Test (for both Brute Force and FLANN)**: As proposed in Lowe’s SIFT paper, this test compares the closest match (M1) and the second-closest match (M2) for each keypoint. The ratio 𝑀1/𝑀2 must be below a threshold to be considered a good match. This test was implemented manually, yielding a highly selective set of matches.
+
+![Example of keypoint detection in GT for the same image](figs/matches_visu.png)
+
+---
+
+2. **Detecting Unknown Queries**
+
+The second part of Task 2 focuses on implementing a system to identify query images that do not match any reference image in the dataset (unknowns). This is essential for improving retrieval accuracy by preventing false matches to images outside the database.
+
+---
+
+**Steps to detect an unknown painting**:
+
+- **Step 1**: For a given query, get the list of the number of matches with every database image.
+- **Step 2**: Compare the top 1 and top 2 number of matches by calculating the ratio between them: `top2/top1`.
+- **Step 3**: The ratio ranges from 0 to 1. The closer to 1, the more similar the number of matches between the top 1 and top 2, which means the system can’t clearly decide, which in turn likely means that the painting is unknown. Therefore, the ratio is tested against a predefined threshold.
+- **Step 4**: If the ratio is above the threshold, the painting is flagged as unknown ([-1]).
+
+---
+
+**Threshold Optimization Study**:
+
+- The threshold is optimized using QSD1 from W4. To check the variability of the optimum found, this optimization will be repeated for different keypoint descriptor methods: ORB + BF + CrossCheck, AKAZE + BF + CrossCheck, and HarrisLap. + ORB + BF + CrossCheck.
+
+- To make the optimization faster, each keypoint descriptor method is only executed once, extracting the matrix with all the number of matching descriptors for every pair query-database_image.
+
+- This matrix is used to test 9,999 different thresholds, going from 0.0001 to 0.9999. For each threshold, the steps shown above are executed for all queries, producing a binary vector of predicted unknown paintings.
+
+- The vector of predictions is then compared to the ground truth, only considering whether or not the painting is actually unknown. This produces an F1 score.
+
+- The F1 score is used to decide which of the 9,999 thresholds is best.
+
+---
+
+**Study Results**:
+
+| Key-Des Method               | Best Threshold | F1 Score |
+|------------------------------|----------------|----------|
+| **ORB + FLANN + Lowe's**      | **0.5062**     | **0.870**|
+| ORB + BF + CrossCheck        | 0.9281         | 0.800    |
+| AKAZE + BF + CrossCheck      | 0.8686         | 0.690    |
+| HarrisLap + BF + CrossCheck  | 0.8345         | 0.714    |
+
+---
+
+**Observations About the Results**:
+
+- The best threshold does indeed change depending on the keypoint descriptor method used.
+- The F1 scores are also different for the different keypoint descriptor methods used, suggesting that some methods detect “more distinct” keypoints, easing the unknown painting detection. In this case, **ORB + FLANN + Lowe** would produce the most distinct ones.
+- We might expect even more dissimilar results for other descriptor matching and verification methods.
+
+---
+
+3. **Performance Comparison of Descriptor Matching Methods**
+
+To determine the best descriptor matching method, we compared the MAP@1 scores and execution times for Brute Force and FLANN across different keypoint descriptor methods. In the following bar plots for the results obtained, we can observe that:
+
+![Bar plot of the results of best matching method](figs/barplot_mm1.png)
+
+- **ORB → FLANN** outperforms Brute Force by 1.57x in MAP@1, and is 2.85x faster.
+- **AKAZE → FLANN** is 14.42x better in MAP@1, and 4.54x faster.
+- **Harris-Lap-ORB → Performance between BF and FLANN** is almost identical in terms of MAP scores (with no significant difference), but FLANN is still 1.05x faster.
+
+---
+
+**Conclusion**: FLANN was generally the superior matching method in terms of both speed and accuracy, especially for ORB and AKAZE descriptors.
+
+---
+
+**Comparative Analysis of FLANN Parameter Settings**
+
+To further optimize FLANN’s performance, we evaluated various parameter settings. The parameters examined include Table Number, Multi Probe Level, Key Size, and Lowe Ratio. Each parameter affects both accuracy and computation time. Based on the plots, the effect is explained after the description of each method:
+
+![Density plots for different values of each FLANN parameter](figs/flann_params.png)
+
+- **Table Number**:
+    - *Description*: Number of hash tables; more tables improve accuracy but increase memory use.
+    - *Effect*: Increasing Table Number improved MAP@1 by approximately 0.03 but nearly tripled computation time.
+
+- **Multi Probe Level**:
+    - *Description*: Number of nearby hash bins to search in addition to the primary bin; higher values boost accuracy but slow queries.
+    - *Effect*: A higher Multi Probe Level improved MAP@1 by around 0.02, with a 20-30% increase in computation time.
+
+- **Key Size**:
+    - *Description*: Length of binary keys; longer keys improve accuracy and reduce speed.
+    - *Effect*: Decreasing Key Size led to a MAP@1 gain of around 0.03, but more than doubled the computation time.
+
+- **Lowe Ratio**:
+    - *Description*: Threshold ratio to filter out poor matches by comparing the two best match distances; lower values give stricter filtering for better matches.
+    - *Effect*: Lowering the Lowe Ratio improved MAP@1 by approximately 0.04 with minimal impact on computation time, making it a particularly effective adjustment.
+
+---
+
+**Optimal Parameter Configuration**
+
+Based on these analyses, the best-performing parameter combination chosen for FLANN was:
+- Table Number: 6
+- Multi Probe Level: 1
+- Key Size: 12
+- Lowe Ratio: 0.8
+
+This configuration achieved a balance of high MAP@1 scores and efficient execution time, making it ideal for tasks involving large datasets and complex matching requirements.
 
 ### Task 3
 
