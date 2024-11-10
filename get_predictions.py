@@ -13,7 +13,6 @@ from src.utils.segmentation import generate_masks
 from src.utils.keypoint_descriptors import *
 
 def lowe_ratio_test (knn_matches, ratio_threshold):
-
     """
     Applies Lowe's ratio test to filter out poor matches from k-nearest neighbors (k-NN) match results.
 
@@ -28,11 +27,12 @@ def lowe_ratio_test (knn_matches, ratio_threshold):
         list: A list of good matches that pass Lowe's ratio test. Each match in the list is from 
         the first element of the tuple `m` in `knn_matches` that satisfies the ratio test.
     """
-        
     good_matches = []
-    for m,n in knn_matches:
-        if m.distance < ratio_threshold * n.distance:
-            good_matches.append(m)
+    for match_pair in knn_matches:
+        if len(match_pair) >= 2:
+            m, n = match_pair[0], match_pair[1]
+            if m.distance < ratio_threshold * n.distance:
+                good_matches.append(m)
     
     return good_matches
 
@@ -156,7 +156,7 @@ def get_num_matching_descriptors(descriptors_image_1, descriptors_image_2, metho
         - Applies Lowe's ratio test for FLANN-based matches.
     """
     if method == "BruteForce":
-        if descr_method == "SIFT":
+        if descr_method in ["SIFT", "Harris-SIFT", "HarrisLaplacian-SIFT"]:
             if params:
                 norm = params[0]
                 crossCheck = params[1]
@@ -164,20 +164,23 @@ def get_num_matching_descriptors(descriptors_image_1, descriptors_image_2, metho
                 norm = cv2.NORM_L2
                 crossCheck = False
 
-        elif descr_method in ["ORB","AKAZE"]:
+        elif descr_method in ["ORB","AKAZE", "Harris-ORB", "Harris-AKAZE", "HarrisLaplacian-ORB", "HarrisLaplacian-AKAZE"]:
             if params:
                 norm = params[0]
                 crossCheck = params[1]
             else:
                 norm = cv2.NORM_HAMMING
                 crossCheck = False
+        else:
+            norm = cv2.NORM_HAMMING
+            crossCheck = True
 
         matcher = cv2.BFMatcher(norm, crossCheck)
         matches = matcher.match(descriptors_image_1, descriptors_image_2)
         num_matches = len(matches)
 
     elif method == "FLANN":
-        if descr_method == "SIFT":
+        if descr_method == ["SIFT", "Harris-SIFT", "HarrisLaplacian-SIFT"]:
             if params:
                 index_params = params[0]
                 search_params = params[1]
@@ -186,10 +189,10 @@ def get_num_matching_descriptors(descriptors_image_1, descriptors_image_2, metho
             else:
                 index_params = dict(algorithm=1, trees=5)
                 search_params = dict(checks=50)
-                k = 5
+                k = 2
                 ratio = 0.7
 
-        elif descr_method in ["ORB","AKAZE"]:
+        elif descr_method in ["ORB","AKAZE", "Harris-ORB", "Harris-AKAZE", "HarrisLaplacian-ORB", "HarrisLaplacian-AKAZE"]:
             if params:
                 index_params = params[0]
                 search_params = params[1]
@@ -198,7 +201,7 @@ def get_num_matching_descriptors(descriptors_image_1, descriptors_image_2, metho
             else:
                 index_params = dict(algorithm=6, table_number=6, key_size=12, multi_probe_level=1)
                 search_params = dict(checks=50)
-                k = 5
+                k = 2
                 ratio = 0.7
         
         matcher = cv2.FlannBasedMatcher(index_params, search_params)
@@ -224,12 +227,13 @@ def check_for_unknown_painting(num_matching_descriptors_list, unknown_painting_t
         bool: True if the painting is determined to be unknown, False otherwise.
     """
 
-    max_matches = max(num_matching_descriptors_list)
-    num_matching_descriptors_list.remove(max_matches)
-    second_max_matches = max(num_matching_descriptors_list)
-    ratio = second_max_matches / max_matches
+    matching_list_aux = sorted(num_matching_descriptors_list, reverse=True)
+    max_matches = matching_list_aux[0]
+    second_max_matches = matching_list_aux[1]
 
-    return ratio > unknown_painting_threshold
+    ratio = second_max_matches / (max_matches+0.000001)
+
+    return ratio
 
 
 def get_predictions(query_dir, bbdd_dir, method, matching_method, matching_params=[], unknown_painting_threshold=2,
